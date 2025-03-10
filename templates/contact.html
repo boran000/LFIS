@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="contact-page">
+    <div class="hero-section bg-warning bg-gradient text-dark p-5 mb-5">
+        <div class="container">
+            <h1>Contact Us</h1>
+            <p class="lead">We're here to help and answer any questions you might have</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mb-5">
+                <h2>Get in Touch</h2>
+                <form method="POST" action="{{ url_for('main.contact') }}">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                        {% for error in form.name.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                        {% for error in form.email.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.subject.label(class="form-label") }}
+                        {{ form.subject(class="form-control" + (" is-invalid" if form.subject.errors else "")) }}
+                        {% for error in form.subject.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.message.label(class="form-label") }}
+                        {{ form.message(class="form-control" + (" is-invalid" if form.message.errors else ""), rows="5") }}
+                        {% for error in form.message.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {{ form.submit(class="btn btn-primary") }}
+                </form>
+            </div>
+            <div class="col-md-6">
+                <h2>Contact Information</h2>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-geo-alt text-primary"></i> Address</h5>
+                        <p class="card-text">
+                            123 School Street<br>
+                            City, State 12345<br>
+                            Country
+                        </p>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-telephone text-primary"></i> Phone Numbers</h5>
+                        <p class="card-text">
+                            Main Office: (123) 456-7890<br>
+                            Admissions: (123) 456-7891<br>
+                            Emergency: (123) 456-7892
+                        </p>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-envelope text-primary"></i> Email Addresses</h5>
+                        <p class="card-text">
+                            General Inquiries: info@school.com<br>
+                            Admissions: admissions@school.com<br>
+                            Support: support@school.com
+                        </p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-clock text-primary"></i> Office Hours</h5>
+                        <p class="card-text">
+                            Monday - Friday: 8:00 AM - 4:00 PM<br>
+                            Saturday: 9:00 AM - 12:00 PM<br>
+                            Sunday: Closed
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <h2>Find Us</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.2219901290355!2d-74.00369368400567!3d40.71312937933185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a23e28c1191%3A0x49f75d3281df052a!2s150%20Park%20Row%2C%20New%20York%2C%20NY%2010007!5e0!3m2!1sen!2sus!4v1644909816294!5m2!1sen!2sus" 
+                                style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

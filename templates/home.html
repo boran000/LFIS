@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section mb-5">
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="carousel-content bg-primary bg-gradient p-5 text-center">
+                    <h1>Welcome to Our School</h1>
+                    <p class="lead">Empowering minds, building futures</p>
+                    <a href="{{ url_for('main.admissions') }}" class="btn btn-light btn-lg">Apply Now</a>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="carousel-content bg-success bg-gradient p-5 text-center">
+                    <h1>Excellence in Education</h1>
+                    <p class="lead">Discover our academic programs</p>
+                    <a href="{{ url_for('main.academics') }}" class="btn btn-light btn-lg">Learn More</a>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="carousel-content bg-info bg-gradient p-5 text-center">
+                    <h1>Join Our Community</h1>
+                    <p class="lead">Experience quality education</p>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg">Register Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-mortarboard"></i> Academic Excellence</h5>
+                <p class="card-text">Our comprehensive curriculum ensures students receive quality education across all subjects.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-people"></i> Expert Faculty</h5>
+                <p class="card-text">Learn from experienced educators dedicated to student success.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-building"></i> Modern Facilities</h5>
+                <p class="card-text">State-of-the-art facilities supporting both academic and extracurricular activities.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="latest-announcements mb-5">
+    <h2 class="mb-4">Latest Announcements</h2>
+    {% if announcements %}
+        {% for announcement in announcements %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ announcement.title }}</h5>
+                <p class="card-text">{{ announcement.content }}</p>
+                <small class="text-muted">Posted on {{ announcement.created_at.strftime('%B %d, %Y') }}</small>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No announcements at this time.</p>
+    {% endif %}
+</div>
+
+<div class="quick-links">
+    <h2 class="mb-4">Quick Links</h2>
+    <div class="row g-4">
+        <div class="col-md-3">
+            <a href="{{ url_for('main.admissions') }}" class="card text-decoration-none">
+                <div class="card-body text-center">
+                    <i class="bi bi-pencil-square fs-1"></i>
+                    <h5 class="mt-2">Admissions</h5>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('main.academics') }}" class="card text-decoration-none">
+                <div class="card-body text-center">
+                    <i class="bi bi-book fs-1"></i>
+                    <h5 class="mt-2">Academics</h5>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('main.news') }}" class="card text-decoration-none">
+                <div class="card-body text-center">
+                    <i class="bi bi-newspaper fs-1"></i>
+                    <h5 class="mt-2">News</h5>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('main.contact') }}" class="card text-decoration-none">
+                <div class="card-body text-center">
+                    <i class="bi bi-envelope fs-1"></i>
+                    <h5 class="mt-2">Contact</h5>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

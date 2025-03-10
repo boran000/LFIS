@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="student-dashboard">
+    <h1 class="mb-4">Student Dashboard</h1>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-book"></i> My Courses</h5>
+                    <p class="card-text h2">6</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-calendar-check"></i> Attendance</h5>
+                    <p class="card-text h2">95%</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-award"></i> Average Grade</h5>
+                    <p class="card-text h2">A</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">My Courses & Grades</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Teacher</th>
+                                    <th>Grade</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for grade in Grade.query.filter_by(student_id=current_user.id).all() %}
+                                <tr>
+                                    <td>{{ grade.course.name }}</td>
+                                    <td>Prof. Smith</td>
+                                    <td><span class="badge bg-success">{{ grade.grade }}</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary">View Details</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Upcoming Events</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <h6 class="mb-1">Mathematics Test</h6>
+                            <p class="mb-1">Chapter 5: Algebra</p>
+                            <small class="text-muted">Tomorrow, 10:00 AM</small>
+                        </div>
+                        <div class="list-group-item">
+                            <h6 class="mb-1">Science Project Due</h6>
+                            <p class="mb-1">Environmental Studies</p>
+                            <small class="text-muted">Next Week</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Links</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary">
+                            <i class="bi bi-calendar-check"></i> View Schedule
+                        </button>
+                        <button class="btn btn-success">
+                            <i class="bi bi-file-text"></i> Download Resources
+                        </button>
+                        <button class="btn btn-info">
+                            <i class="bi bi-chat-dots"></i> Message Teachers
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Announcements</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for announcement in Announcement.query.order_by(Announcement.created_at.desc()).limit(3).all() %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ announcement.title }}</h6>
+                                <small class="text-muted">{{ announcement.created_at.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <p class="mb-1">{{ announcement.content }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="news-page">
+    <div class="hero-section bg-secondary bg-gradient text-white p-5 mb-5">
+        <div class="container">
+            <h1>News & Events</h1>
+            <p class="lead">Stay updated with the latest happenings at our school</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h2 class="mb-4">Latest Announcements</h2>
+                {% if announcements %}
+                    {% for announcement in announcements %}
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title">{{ announcement.title }}</h3>
+                            <p class="card-text text-muted">
+                                <small>
+                                    <i class="bi bi-calendar"></i> 
+                                    {{ announcement.created_at.strftime('%B %d, %Y') }}
+                                    {% if announcement.author_id %}
+                                    | <i class="bi bi-person"></i> 
+                                    {{ User.query.get(announcement.author_id).first_name }}
+                                    {{ User.query.get(announcement.author_id).last_name }}
+                                    {% endif %}
+                                </small>
+                            </p>
+                            <p class="card-text">{{ announcement.content }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> No announcements available at this time.
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Upcoming Events</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item">
+                                <h6>Annual Sports Day</h6>
+                                <p class="mb-1"><i class="bi bi-calendar"></i> March 15, 2024</p>
+                                <small class="text-muted">School Sports Complex</small>
+                            </div>
+                            <div class="list-group-item">
+                                <h6>Science Exhibition</h6>
+                                <p class="mb-1"><i class="bi bi-calendar"></i> March 20, 2024</p>
+                                <small class="text-muted">School Auditorium</small>
+                            </div>
+                            <div class="list-group-item">
+                                <h6>Parent-Teacher Meeting</h6>
+                                <p class="mb-1"><i class="bi bi-calendar"></i> April 5, 2024</p>
+                                <small class="text-muted">All Classrooms</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">School Newsletter</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Subscribe to our newsletter to receive updates directly in your inbox.</p>
+                        <form>
+                            <div class="mb-3">
+                                <input type="email" class="form-control" placeholder="Enter your email">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Quick Links</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            <a href="{{ url_for('main.academics') }}" class="list-group-item list-group-item-action">
+                                <i class="bi bi-book"></i> Academic Calendar
+                            </a>
+                            <a href="{{ url_for('main.admissions') }}" class="list-group-item list-group-item-action">
+                                <i class="bi bi-pencil"></i> Admission Updates
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="bi bi-trophy"></i> Student Achievements
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

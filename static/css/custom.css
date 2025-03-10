@@ -1,0 +1,144 @@
+/* Custom CSS - Minimal overrides for Bootstrap */
+
+/* Override Bootstrap dark theme variables */
+[data-bs-theme=dark] {
+    --bs-body-bg: #1a1a1a;
+    --bs-body-color: #f8f9fa;
+}
+
+/* Hero sections */
+.hero-section {
+    border-radius: 0 0 1rem 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Card enhancements */
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+/* Navigation */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Footer styling */
+footer {
+    margin-top: 4rem;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Dashboard cards */
+.dashboard-stats .card {
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+/* Timeline style for admissions process */
+.process-timeline .card {
+    border-left: 4px solid var(--bs-primary);
+    margin-left: 1rem;
+}
+
+/* Form styling */
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Table enhancements */
+.table th {
+    font-weight: 600;
+}
+
+/* Button improvements */
+.btn {
+    border-radius: 0.5rem;
+}
+
+/* Carousel customization */
+.carousel-content {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+}
+
+/* Custom icon sizes */
+.display-4.bi {
+    font-size: 2.5rem;
+}
+
+/* Quick links hover effect */
+.quick-links .card:hover {
+    background-color: var(--bs-primary);
+    color: white;
+}
+
+/* Custom alert styling */
+.alert {
+    border-radius: 0.5rem;
+    border: none;
+}
+
+/* Profile images */
+.profile-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Custom badge styles */
+.badge {
+    padding: 0.5em 1em;
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem !important;
+    }
+    
+    .carousel-content {
+        min-height: 200px;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+}
+
+/* Accessibility improvements */
+.btn:focus,
+.form-control:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none;
+    }
+    
+    .card {
+        border: 1px solid #dee2e6;
+        box-shadow: none;
+    }
+}
