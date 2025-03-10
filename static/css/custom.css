@@ -75,6 +75,7 @@ a, button, .card, .nav-link {
     width: 100%;
     left: 0;
 }
+
 .nav-link:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
@@ -291,6 +292,15 @@ footer {
     padding: 1rem 0;
 }
 
+/* Logo Enhancements */
+.school-logo {
+    max-height: 120px;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
+}
+
 .school-name {
     color: #2B5C3F !important;
     font-size: 2.5rem;
@@ -299,6 +309,14 @@ footer {
     letter-spacing: 2px;
     line-height: 1.2;
     margin-bottom: 0.5rem;
+}
+
+.school-name .text-danger {
+    color: #ff0000 !important;
+}
+
+.school-name .text-success {
+    color: #2B5C3F !important;
 }
 
 .certification {
@@ -314,14 +332,6 @@ footer {
     color: #444;
     font-size: 1rem;
     letter-spacing: 0.5px;
-}
-
-/* Logo Enhancements */
-.school-logo {
-    max-height: 120px;
-    width: auto;
-    display: block;
-    margin: 0 auto;
 }
 
 /* Creative Section */
@@ -345,12 +355,10 @@ footer {
     line-height: 1.2;
 }
 
-
 /* Navigation Styles - from edited code */
 .navbar-dark.bg-success {
     background-color: #2B5C3F !important;
 }
-
 
 /* Contact Info Styles - from edited code */
 .contact-info a {

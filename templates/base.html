@@ -34,11 +34,15 @@
             <div class="row align-items-center">
                 <!-- Logo -->
                 <div class="col-md-2">
-                    <img src="{{ url_for('static', filename='images/school-logo.svg') }}" alt="School Logo" class="img-fluid" style="max-height: 100px;">
+                    <img src="{{ url_for('static', filename='images/school_logo.png') }}" alt="School Logo" class="img-fluid school-logo">
                 </div>
                 <!-- School Info -->
                 <div class="col-md-8 text-center">
-                    <h1 class="school-name text-success mb-2">LITTLE FLOWER INTERNATIONAL SCHOOL</h1>
+                    <h1 class="school-name mb-2">
+                        <span class="text-danger">LITTLE FLOWER</span> 
+                        <span class="text-success">INTERNATIONAL</span> 
+                        <span class="text-danger">SCHOOL</span>
+                    </h1>
                     <p class="certification mb-1">AN ISO 9001:2008 CERTIFIED (Affiliated to C.B.S.E. New Delhi)</p>
                     <p class="address mb-0">Mau Balia Road, Vill - Khalishpur, P.O.-Adari, Distt.-Mau (U.P.), 275102</p>
                 </div>
