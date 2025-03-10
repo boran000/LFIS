@@ -55,9 +55,9 @@ a, button, .card, .nav-link {
 
 .nav-link {
     position: relative;
-    color: #ffffff !important; /* Added from edited code */
+    color: #ffffff !important;
     font-weight: 500;
-    padding: 0.5rem 1rem; /* Added from edited code */
+    padding: 0.5rem 1rem;
 }
 
 .nav-link::after {
@@ -75,7 +75,7 @@ a, button, .card, .nav-link {
     width: 100%;
     left: 0;
 }
-.nav-link:hover { /* Added from edited code */
+.nav-link:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -157,21 +157,25 @@ a, button, .card, .nav-link {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
     }
-    .school-name { /* Added from edited code */
-        font-size: 1.5rem;
+    .school-name {
+        font-size: 1.8rem;
     }
 
-    .certification { /* Added from edited code */
+    .certification {
         font-size: 0.9rem;
     }
 
-    .address { /* Added from edited code */
+    .address {
         font-size: 0.8rem;
     }
 
-    .creative-section { /* Added from edited code */
+    .creative-section {
         text-align: center;
         margin-top: 1rem;
+    }
+    .school-logo {
+        max-height: 80px;
+        margin-bottom: 1rem;
     }
 }
 
@@ -276,7 +280,7 @@ footer {
     font-weight: 500;
 }
 
-/* Header Styles - from edited code */
+/* Header Styles - enhanced version */
 .top-bar {
     background-color: #2B5C3F !important;
 }
@@ -284,43 +288,63 @@ footer {
 .main-header {
     background-color: #ffffff;
     border-bottom: 1px solid #e0e0e0;
+    padding: 1rem 0;
 }
 
 .school-name {
     color: #2B5C3F !important;
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: bold;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
 }
 
 .certification {
     color: #2B5C3F;
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.3rem;
 }
 
 .address {
-    color: #666;
-    font-size: 0.9rem;
+    color: #444;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
 }
 
+/* Logo Enhancements */
+.school-logo {
+    max-height: 120px;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Creative Section */
 .creative-section {
     position: relative;
+    text-align: right;
 }
 
 .creative-text {
     color: #2B5C3F;
-    font-size: 0.8rem;
-    font-weight: 500;
+    font-size: 1rem;
+    font-weight: 600;
     margin-top: 0.5rem;
+    line-height: 1.2;
 }
 
 .creative-subtext {
     color: #2B5C3F;
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     font-style: italic;
+    line-height: 1.2;
 }
+
 
 /* Navigation Styles - from edited code */
 .navbar-dark.bg-success {

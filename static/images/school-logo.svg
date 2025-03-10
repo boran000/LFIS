@@ -1,7 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background Circle -->
   <circle cx="100" cy="100" r="95" fill="#2B5C3F"/>
   <circle cx="100" cy="100" r="85" fill="#fff"/>
-  <path d="M100 30c-38.66 0-70 31.34-70 70s31.34 70 70 70 70-31.34 70-70S138.66 30 100 30zm0 130c-33.14 0-60-26.86-60-60s26.86-60 60-60 60 26.86 60 60-26.86 60-60 60z" fill="#2B5C3F"/>
-  <path d="M100 50c-27.57 0-50 22.43-50 50s22.43 50 50 50 50-22.43 50-50-22.43-50-50-50zm0 90c-22.06 0-40-17.94-40-40s17.94-40 40-40 40 17.94 40 40-17.94 40-40 40z" fill="#2B5C3F"/>
-  <text x="100" y="105" text-anchor="middle" fill="#2B5C3F" font-family="Arial" font-weight="bold" font-size="24">LFIS</text>
+
+  <!-- Book Symbol -->
+  <path d="M70 70 h60 v60 h-60 z" fill="none" stroke="#2B5C3F" stroke-width="3"/>
+  <path d="M75 75 h50 v50 h-50 z" fill="#2B5C3F"/>
+
+  <!-- Torch Symbol -->
+  <path d="M95 60 q5,-10 10,0 l5,20 h-20 l5,-20" fill="#2B5C3F"/>
+  <rect x="95" y="80" width="10" height="30" fill="#2B5C3F"/>
+
+  <!-- Flame -->
+  <path d="M97 55 q3,-8 6,0 q2,-6 4,0 q2,-4 3,0 l-6.5,10 z" fill="#2B5C3F"/>
+
+  <!-- Text -->
+  <text x="100" y="140" text-anchor="middle" fill="#2B5C3F" font-family="Arial" font-weight="bold" font-size="24">LFIS</text>
+  <text x="100" y="155" text-anchor="middle" fill="#2B5C3F" font-family="Arial" font-size="8">EST. 2008</text>
 </svg>
