@@ -7,44 +7,41 @@ from werkzeug.security import generate_password_hash, check_password_hash
 def load_user(id):
     return User.query.get(int(id))
 
+class RegistrationCode(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(20), unique=True, nullable=False)
+    role = db.Column(db.String(20), nullable=False)  # student, teacher
+    is_used = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    used_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))
-    role = db.Column(db.String(20), nullable=False)  # admin, teacher, student, parent
+    role = db.Column(db.String(20), nullable=False)  # admin, teacher, student
     first_name = db.Column(db.String(64))
     last_name = db.Column(db.String(64))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    registration_code_used = db.Column(db.String(20))
+
+    # Relationships
+    assignments_given = db.relationship('Assignment', backref='teacher', lazy=True,
+                                      foreign_keys='Assignment.teacher_id')
+    assignments_received = db.relationship('Assignment', backref='student', lazy=True,
+                                         foreign_keys='Assignment.student_id')
+    # Clarify attendance relationships
+    attendances = db.relationship('Attendance', backref='student', lazy=True,
+                                foreign_keys='Attendance.student_id')
+    attendances_marked = db.relationship('Attendance', backref='marked_by_teacher', lazy=True,
+                                       foreign_keys='Attendance.marked_by')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-class Course(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text)
-    teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-class Attendance(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
-    date = db.Column(db.Date, nullable=False)
-    status = db.Column(db.String(20))  # present, absent, late
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-class Grade(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
-    grade = db.Column(db.String(2))
-    comments = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Announcement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -53,7 +50,48 @@ class Announcement(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# New models for CMS
+class Assignment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    due_date = db.Column(db.DateTime)
+    file_url = db.Column(db.String(255))
+    teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    status = db.Column(db.String(20), default='pending')  # pending, submitted, graded
+    grade = db.Column(db.String(5))
+    feedback = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class StudentProgress(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    subject = db.Column(db.String(100))
+    grade = db.Column(db.String(5))
+    remarks = db.Column(db.Text)
+    term = db.Column(db.String(20))  # First Term, Second Term, etc.
+    academic_year = db.Column(db.String(9))  # e.g., 2024-2025
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class TransferCertificate(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    tc_number = db.Column(db.String(50), unique=True)
+    issue_date = db.Column(db.DateTime, default=datetime.utcnow)
+    reason = db.Column(db.Text)
+    file_url = db.Column(db.String(255))
+    status = db.Column(db.String(20), default='pending')  # pending, approved, issued
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Attendance(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    date = db.Column(db.Date, nullable=False)
+    status = db.Column(db.String(20), default='present')  # present, absent, late
+    marked_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 class Banner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)

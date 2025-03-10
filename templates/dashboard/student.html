@@ -3,7 +3,7 @@
 {% block content %}
 <div class="student-dashboard">
     <h1 class="mb-4">Student Dashboard</h1>
-    
+
     <div class="row g-4">
         <div class="col-md-4">
             <div class="card bg-primary text-white">
@@ -43,17 +43,16 @@
                             <thead>
                                 <tr>
                                     <th>Course</th>
-                                    <th>Teacher</th>
                                     <th>Grade</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for grade in Grade.query.filter_by(student_id=current_user.id).all() %}
+                                {% for progress in StudentProgress.query.filter_by(student_id=current_user.id).all() %}
                                 <tr>
-                                    <td>{{ grade.course.name }}</td>
-                                    <td>Prof. Smith</td>
-                                    <td><span class="badge bg-success">{{ grade.grade }}</span></td>
+                                    <td>{{ progress.subject }}</td>
+                                    <td>{{ progress.grade }}</td>
+                                    <td><span class="badge bg-success">{{ progress.grade }}</span></td>
                                     <td>
                                         <button class="btn btn-sm btn-primary">View Details</button>
                                     </td>
@@ -65,24 +64,21 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="mb-0">Upcoming Events</h5>
+                    <h5 class="mb-0">Upcoming Assignments</h5>
                 </div>
                 <div class="card-body">
                     <div class="list-group">
+                        {% for assignment in Assignment.query.filter_by(student_id=current_user.id, status='pending').all() %}
                         <div class="list-group-item">
-                            <h6 class="mb-1">Mathematics Test</h6>
-                            <p class="mb-1">Chapter 5: Algebra</p>
-                            <small class="text-muted">Tomorrow, 10:00 AM</small>
+                            <h6 class="mb-1">{{ assignment.title }}</h6>
+                            <p class="mb-1">{{ assignment.description }}</p>
+                            <small class="text-muted">Due: {{ assignment.due_date.strftime('%Y-%m-%d') }}</small>
                         </div>
-                        <div class="list-group-item">
-                            <h6 class="mb-1">Science Project Due</h6>
-                            <p class="mb-1">Environmental Studies</p>
-                            <small class="text-muted">Next Week</small>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -93,15 +89,15 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        <button class="btn btn-primary">
-                            <i class="bi bi-calendar-check"></i> View Schedule
-                        </button>
-                        <button class="btn btn-success">
-                            <i class="bi bi-file-text"></i> Download Resources
-                        </button>
-                        <button class="btn btn-info">
-                            <i class="bi bi-chat-dots"></i> Message Teachers
-                        </button>
+                        <a href="{{ url_for('dashboard.view_attendance') }}" class="btn btn-primary">
+                            <i class="bi bi-calendar-check"></i> View Attendance
+                        </a>
+                        <a href="{{ url_for('dashboard.submit_assignment') }}" class="btn btn-success">
+                            <i class="bi bi-file-text"></i> Submit Assignment
+                        </a>
+                        <a href="{{ url_for('dashboard.request_tc') }}" class="btn btn-info">
+                            <i class="bi bi-file-earmark-text"></i> Request TC
+                        </a>
                     </div>
                 </div>
             </div>

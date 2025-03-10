@@ -3,10 +3,11 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 import os
 from app import db, app
-from models import User, Announcement, Banner, Document, Media, Content
+from models import User, Announcement, Banner, Document, Media, Content, Assignment, Attendance, StudentProgress, TransferCertificate
 from forms import (LoginForm, RegistrationForm, AnnouncementForm, ContactForm,
-                  BannerForm, DocumentForm, MediaForm, ContentForm)
+                  BannerForm, DocumentForm, MediaForm, ContentForm, AssignmentForm, AttendanceForm, StudentProgressForm, SubmitAssignmentForm, TCRequestForm)
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -328,3 +329,155 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('main.home'))
+
+# Teacher specific routes
+@dashboard_bp.route('/assignments/new', methods=['GET', 'POST'])
+@login_required
+def new_assignment():
+    if current_user.role != 'teacher':
+        flash('Access denied. Teacher privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    form = AssignmentForm()
+    if form.validate_on_submit():
+        try:
+            # Handle file upload if present
+            file_url = None
+            if form.file.data:
+                file = form.file.data
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'assignments', filename)
+                os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                file.save(file_path)
+                file_url = f'/uploads/assignments/{filename}'
+
+            assignment = Assignment(
+                title=form.title.data,
+                description=form.description.data,
+                due_date=form.due_date.data,
+                file_url=file_url,
+                teacher_id=current_user.id
+            )
+            db.session.add(assignment)
+            db.session.commit()
+            flash('Assignment created successfully!', 'success')
+            return redirect(url_for('dashboard.index'))
+        except Exception as e:
+            logger.error(f"Error creating assignment: {str(e)}")
+            flash('Error creating assignment. Please try again.', 'danger')
+
+    return render_template('dashboard/assignment_form.html', form=form, title='New Assignment')
+
+@dashboard_bp.route('/attendance/take', methods=['GET', 'POST'])
+@login_required
+def take_attendance():
+    if current_user.role != 'teacher':
+        flash('Access denied. Teacher privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    form = AttendanceForm()
+    if form.validate_on_submit():
+        try:
+            # Get all students
+            students = User.query.filter_by(role='student').all()
+            for student in students:
+                attendance = Attendance(
+                    student_id=student.id,
+                    date=form.date.data,
+                    status=request.form.get(f'status_{student.id}', 'absent'),
+                    marked_by=current_user.id
+                )
+                db.session.add(attendance)
+            db.session.commit()
+            flash('Attendance marked successfully!', 'success')
+            return redirect(url_for('dashboard.index'))
+        except Exception as e:
+            logger.error(f"Error marking attendance: {str(e)}")
+            flash('Error marking attendance. Please try again.', 'danger')
+
+    students = User.query.filter_by(role='student').all()
+    return render_template('dashboard/attendance_form.html', form=form, students=students, title='Take Attendance')
+
+@dashboard_bp.route('/progress/record', methods=['GET', 'POST'])
+@login_required
+def student_progress():
+    if current_user.role != 'teacher':
+        flash('Access denied. Teacher privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    form = StudentProgressForm()
+    if form.validate_on_submit():
+        try:
+            progress = StudentProgress(
+                student_id=request.form.get('student_id'),
+                subject=form.subject.data,
+                grade=form.grade.data,
+                remarks=form.remarks.data,
+                term=form.term.data,
+                academic_year=form.academic_year.data
+            )
+            db.session.add(progress)
+            db.session.commit()
+            flash('Progress recorded successfully!', 'success')
+            return redirect(url_for('dashboard.index'))
+        except Exception as e:
+            logger.error(f"Error recording progress: {str(e)}")
+            flash('Error recording progress. Please try again.', 'danger')
+
+    students = User.query.filter_by(role='student').all()
+    return render_template('dashboard/progress_form.html', form=form, students=students, title='Record Progress')
+
+# Student specific routes
+@dashboard_bp.route('/assignments/submit/<int:assignment_id>', methods=['GET', 'POST'])
+@login_required
+def submit_assignment(assignment_id):
+    if current_user.role != 'student':
+        flash('Access denied. Student privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    assignment = Assignment.query.get_or_404(assignment_id)
+    form = SubmitAssignmentForm()
+
+    if form.validate_on_submit():
+        try:
+            file = form.file.data
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'submissions', filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            file.save(file_path)
+
+            assignment.status = 'submitted'
+            assignment.file_url = f'/uploads/submissions/{filename}'
+            db.session.commit()
+            flash('Assignment submitted successfully!', 'success')
+            return redirect(url_for('dashboard.index'))
+        except Exception as e:
+            logger.error(f"Error submitting assignment: {str(e)}")
+            flash('Error submitting assignment. Please try again.', 'danger')
+
+    return render_template('dashboard/submit_assignment.html', form=form, assignment=assignment)
+
+@dashboard_bp.route('/tc/request', methods=['GET', 'POST'])
+@login_required
+def request_tc():
+    if current_user.role != 'student':
+        flash('Access denied. Student privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    form = TCRequestForm()
+    if form.validate_on_submit():
+        try:
+            tc = TransferCertificate(
+                student_id=current_user.id,
+                reason=form.reason.data,
+                tc_number=f'TC{current_user.id}-{datetime.utcnow().strftime("%Y%m%d%H%M")}'
+            )
+            db.session.add(tc)
+            db.session.commit()
+            flash('Transfer Certificate request submitted successfully!', 'success')
+            return redirect(url_for('dashboard.index'))
+        except Exception as e:
+            logger.error(f"Error requesting TC: {str(e)}")
+            flash('Error requesting TC. Please try again.', 'danger')
+
+    return render_template('dashboard/tc_request.html', form=form)
