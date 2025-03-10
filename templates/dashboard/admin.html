@@ -3,7 +3,7 @@
 {% block content %}
 <div class="admin-dashboard">
     <h1 class="mb-4">Admin Dashboard</h1>
-    
+
     <div class="row g-4">
         <div class="col-md-3">
             <div class="card bg-primary text-white">
@@ -16,55 +16,61 @@
         <div class="col-md-3">
             <div class="card bg-success text-white">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-book"></i> Courses</h5>
-                    <p class="card-text h2">{{ Course.query.count() }}</p>
+                    <h5 class="card-title"><i class="bi bi-file-text"></i> Documents</h5>
+                    <p class="card-text h2">{{ Document.query.count() }}</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card bg-info text-white">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-mortarboard"></i> Teachers</h5>
-                    <p class="card-text h2">{{ User.query.filter_by(role='teacher').count() }}</p>
+                    <h5 class="card-title"><i class="bi bi-images"></i> Media</h5>
+                    <p class="card-text h2">{{ Media.query.count() }}</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card bg-warning text-white">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-person-badge"></i> Students</h5>
-                    <p class="card-text h2">{{ User.query.filter_by(role='student').count() }}</p>
+                    <h5 class="card-title"><i class="bi bi-megaphone"></i> Announcements</h5>
+                    <p class="card-text h2">{{ Announcement.query.count() }}</p>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Content Management Section -->
     <div class="row mt-5">
-        <div class="col-md-6">
+        <!-- Banners Management -->
+        <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Recent Users</h5>
-                    <button class="btn btn-sm btn-primary">Add User</button>
+                    <h5 class="mb-0"><i class="bi bi-image"></i> Banners</h5>
+                    <a href="{{ url_for('dashboard.new_banner') }}" class="btn btn-sm btn-primary">Add Banner</a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Role</th>
-                                    <th>Joined</th>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th>Order</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for user in User.query.order_by(User.created_at.desc()).limit(5).all() %}
+                                {% for banner in Banner.query.order_by(Banner.order.asc()).all() %}
                                 <tr>
-                                    <td>{{ user.first_name }} {{ user.last_name }}</td>
-                                    <td><span class="badge bg-primary">{{ user.role }}</span></td>
-                                    <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ banner.title }}</td>
                                     <td>
-                                        <button class="btn btn-sm btn-warning">Edit</button>
+                                        <span class="badge {% if banner.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {{ 'Active' if banner.is_active else 'Inactive' }}
+                                        </span>
+                                    </td>
+                                    <td>{{ banner.order }}</td>
+                                    <td>
+                                        <a href="{{ url_for('dashboard.edit_banner', id=banner.id) }}" class="btn btn-sm btn-warning">Edit</a>
                                         <button class="btn btn-sm btn-danger">Delete</button>
                                     </td>
                                 </tr>
@@ -75,22 +81,121 @@
                 </div>
             </div>
         </div>
-        
-        <div class="col-md-6">
+
+        <!-- Documents Management -->
+        <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Recent Announcements</h5>
-                    <button class="btn btn-sm btn-primary">New Announcement</button>
+                    <h5 class="mb-0"><i class="bi bi-file-earmark"></i> Documents</h5>
+                    <a href="{{ url_for('dashboard.new_document') }}" class="btn btn-sm btn-primary">Upload Document</a>
                 </div>
                 <div class="card-body">
-                    <div class="list-group">
-                        {% for announcement in Announcement.query.order_by(Announcement.created_at.desc()).limit(5).all() %}
-                        <div class="list-group-item">
-                            <h6 class="mb-1">{{ announcement.title }}</h6>
-                            <p class="mb-1">{{ announcement.content[:100] }}...</p>
-                            <small class="text-muted">{{ announcement.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
-                        </div>
-                        {% endfor %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Access</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc in Document.query.order_by(Document.created_at.desc()).all() %}
+                                <tr>
+                                    <td>{{ doc.title }}</td>
+                                    <td><span class="badge bg-info">{{ doc.document_type }}</span></td>
+                                    <td>
+                                        <span class="badge {% if doc.is_public %}bg-success{% else %}bg-warning{% endif %}">
+                                            {{ 'Public' if doc.is_public else 'Private' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('dashboard.edit_document', id=doc.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <button class="btn btn-sm btn-danger">Delete</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Media Gallery Management -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-camera"></i> Media Gallery</h5>
+                    <a href="{{ url_for('dashboard.new_media') }}" class="btn btn-sm btn-primary">Upload Media</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for media in Media.query.order_by(Media.created_at.desc()).all() %}
+                                <tr>
+                                    <td>{{ media.title }}</td>
+                                    <td><span class="badge bg-info">{{ media.media_type }}</span></td>
+                                    <td>{{ media.gallery_category }}</td>
+                                    <td>
+                                        <a href="{{ url_for('dashboard.edit_media', id=media.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <button class="btn btn-sm btn-danger">Delete</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Pages Management -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-file-richtext"></i> Content Pages</h5>
+                    <a href="{{ url_for('dashboard.new_content') }}" class="btn btn-sm btn-primary">Add Content</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Page Key</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for content in Content.query.order_by(Content.created_at.desc()).all() %}
+                                <tr>
+                                    <td>{{ content.title }}</td>
+                                    <td><code>{{ content.page_key }}</code></td>
+                                    <td>
+                                        <span class="badge {% if content.is_published %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {{ 'Published' if content.is_published else 'Draft' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('dashboard.edit_content', id=content.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <button class="btn btn-sm btn-danger">Delete</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

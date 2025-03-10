@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, TextAreaField, SubmitField
-from wtforms.validators import DataRequired, Email, Length, EqualTo
+from wtforms import StringField, PasswordField, SelectField, TextAreaField, SubmitField, BooleanField, FileField, IntegerField
+from wtforms.validators import DataRequired, Email, Length, EqualTo, URL, Optional
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -33,3 +33,51 @@ class ContactForm(FlaskForm):
     subject = StringField('Subject', validators=[DataRequired()])
     message = TextAreaField('Message', validators=[DataRequired()])
     submit = SubmitField('Send Message')
+
+# New forms for CMS
+class BannerForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    description = TextAreaField('Description')
+    image = FileField('Banner Image', validators=[DataRequired()])
+    link_url = StringField('Link URL', validators=[Optional(), URL()])
+    is_active = BooleanField('Active')
+    order = IntegerField('Display Order', default=0)
+    submit = SubmitField('Save Banner')
+
+class DocumentForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    description = TextAreaField('Description')
+    document_type = SelectField('Document Type', choices=[
+        ('certificate', 'Certificate'),
+        ('form', 'Form'),
+        ('notice', 'Notice'),
+        ('other', 'Other')
+    ], validators=[DataRequired()])
+    document = FileField('Document File', validators=[DataRequired()])
+    is_public = BooleanField('Public Access', default=True)
+    submit = SubmitField('Upload Document')
+
+class MediaForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    description = TextAreaField('Description')
+    media_type = SelectField('Media Type', choices=[
+        ('photo', 'Photo'),
+        ('video', 'Video')
+    ], validators=[DataRequired()])
+    media_file = FileField('Media File', validators=[DataRequired()])
+    thumbnail = FileField('Thumbnail (for videos)')
+    gallery_category = SelectField('Gallery Category', choices=[
+        ('events', 'Events'),
+        ('campus', 'Campus'),
+        ('activities', 'Activities'),
+        ('other', 'Other')
+    ])
+    is_featured = BooleanField('Featured')
+    submit = SubmitField('Upload Media')
+
+class ContentForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    content = TextAreaField('Content', validators=[DataRequired()])
+    page_key = StringField('Page Identifier', validators=[DataRequired()])
+    is_published = BooleanField('Published', default=True)
+    submit = SubmitField('Save Content')

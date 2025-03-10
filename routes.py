@@ -1,8 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.utils import secure_filename
+import os
 from app import db, app
-from models import User, Announcement
-from forms import LoginForm, RegistrationForm, AnnouncementForm, ContactForm
+from models import User, Announcement, Banner, Document, Media, Content
+from forms import (LoginForm, RegistrationForm, AnnouncementForm, ContactForm,
+                  BannerForm, DocumentForm, MediaForm, ContentForm)
 import logging
 
 logger = logging.getLogger(__name__)
@@ -31,8 +34,9 @@ def home():
     logger.info("Home route accessed")
     try:
         announcements = Announcement.query.order_by(Announcement.created_at.desc()).limit(3).all()
-        logger.info(f"Retrieved {len(announcements)} announcements")
-        return render_template('home.html', announcements=announcements)
+        banners = Banner.query.filter_by(is_active=True).order_by(Banner.order.asc()).all()
+        logger.info(f"Retrieved {len(announcements)} announcements and {len(banners)} banners")
+        return render_template('home.html', announcements=announcements, banners=banners)
     except Exception as e:
         logger.error(f"Error in home route: {str(e)}")
         return "An error occurred", 500
@@ -101,7 +105,184 @@ def new_announcement():
     return render_template('dashboard/new_announcement.html', form=form)
 
 
-# Auth routes
+# CMS Management Routes
+@dashboard_bp.route('/banners/new', methods=['GET', 'POST'])
+@login_required
+def new_banner():
+    if current_user.role != 'admin':
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    form = BannerForm()
+    if form.validate_on_submit():
+        try:
+            # Handle file upload
+            image = form.image.data
+            filename = secure_filename(image.filename)
+            image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'banners', filename)
+            os.makedirs(os.path.dirname(image_path), exist_ok=True)
+            image.save(image_path)
+
+            banner = Banner(
+                title=form.title.data,
+                description=form.description.data,
+                image_url=f'/uploads/banners/{filename}',
+                link_url=form.link_url.data,
+                is_active=form.is_active.data,
+                order=form.order.data
+            )
+            db.session.add(banner)
+            db.session.commit()
+            flash('Banner added successfully!', 'success')
+            return redirect(url_for('dashboard.index'))
+        except Exception as e:
+            logger.error(f"Error creating banner: {str(e)}")
+            flash('Error creating banner. Please try again.', 'danger')
+
+    return render_template('dashboard/banner_form.html', form=form, title='New Banner')
+
+@dashboard_bp.route('/documents/new', methods=['GET', 'POST'])
+@login_required
+def new_document():
+    if current_user.role != 'admin':
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    form = DocumentForm()
+    if form.validate_on_submit():
+        try:
+            # Handle file upload
+            doc_file = form.document.data
+            filename = secure_filename(doc_file.filename)
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'documents', filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            doc_file.save(file_path)
+
+            document = Document(
+                title=form.title.data,
+                description=form.description.data,
+                document_type=form.document_type.data,
+                file_url=f'/uploads/documents/{filename}',
+                is_public=form.is_public.data
+            )
+            db.session.add(document)
+            db.session.commit()
+            flash('Document uploaded successfully!', 'success')
+            return redirect(url_for('dashboard.index'))
+        except Exception as e:
+            logger.error(f"Error uploading document: {str(e)}")
+            flash('Error uploading document. Please try again.', 'danger')
+
+    return render_template('dashboard/document_form.html', form=form, title='Upload Document')
+
+@dashboard_bp.route('/media/new', methods=['GET', 'POST'])
+@login_required
+def new_media():
+    if current_user.role != 'admin':
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    form = MediaForm()
+    if form.validate_on_submit():
+        try:
+            # Handle media file upload
+            media_file = form.media_file.data
+            filename = secure_filename(media_file.filename)
+            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'media', filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            media_file.save(file_path)
+
+            # Handle thumbnail if provided (for videos)
+            thumbnail_url = None
+            if form.thumbnail.data:
+                thumb_file = form.thumbnail.data
+                thumb_filename = secure_filename(thumb_file.filename)
+                thumb_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'thumbnails', thumb_filename)
+                os.makedirs(os.path.dirname(thumb_path), exist_ok=True)
+                thumb_file.save(thumb_path)
+                thumbnail_url = f'/uploads/thumbnails/{thumb_filename}'
+
+            media = Media(
+                title=form.title.data,
+                description=form.description.data,
+                media_type=form.media_type.data,
+                file_url=f'/uploads/media/{filename}',
+                thumbnail_url=thumbnail_url,
+                gallery_category=form.gallery_category.data,
+                is_featured=form.is_featured.data
+            )
+            db.session.add(media)
+            db.session.commit()
+            flash('Media uploaded successfully!', 'success')
+            return redirect(url_for('dashboard.index'))
+        except Exception as e:
+            logger.error(f"Error uploading media: {str(e)}")
+            flash('Error uploading media. Please try again.', 'danger')
+
+    return render_template('dashboard/media_form.html', form=form, title='Upload Media')
+
+@dashboard_bp.route('/content/new', methods=['GET', 'POST'])
+@login_required
+def new_content():
+    if current_user.role != 'admin':
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    form = ContentForm()
+    if form.validate_on_submit():
+        try:
+            content = Content(
+                title=form.title.data,
+                content=form.content.data,
+                page_key=form.page_key.data,
+                is_published=form.is_published.data
+            )
+            db.session.add(content)
+            db.session.commit()
+            flash('Content page created successfully!', 'success')
+            return redirect(url_for('dashboard.index'))
+        except Exception as e:
+            logger.error(f"Error creating content: {str(e)}")
+            flash('Error creating content. Please try again.', 'danger')
+
+    return render_template('dashboard/content_form.html', form=form, title='New Content Page')
+
+# Edit routes for CMS content
+@dashboard_bp.route('/banners/<int:id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_banner(id):
+    if current_user.role != 'admin':
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    banner = Banner.query.get_or_404(id)
+    form = BannerForm(obj=banner)
+
+    if form.validate_on_submit():
+        try:
+            banner.title = form.title.data
+            banner.description = form.description.data
+            banner.link_url = form.link_url.data
+            banner.is_active = form.is_active.data
+            banner.order = form.order.data
+
+            if form.image.data:
+                image = form.image.data
+                filename = secure_filename(image.filename)
+                image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'banners', filename)
+                os.makedirs(os.path.dirname(image_path), exist_ok=True)
+                image.save(image_path)
+                banner.image_url = f'/uploads/banners/{filename}'
+
+            db.session.commit()
+            flash('Banner updated successfully!', 'success')
+            return redirect(url_for('dashboard.index'))
+        except Exception as e:
+            logger.error(f"Error updating banner: {str(e)}")
+            flash('Error updating banner. Please try again.', 'danger')
+
+    return render_template('dashboard/banner_form.html', form=form, title='Edit Banner', banner=banner)
+
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     logger.info("Login route accessed")

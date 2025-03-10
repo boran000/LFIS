@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">{{ title }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
+                            {% for error in form.title.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows="3") }}
+                            {% for error in form.description.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.media_type.label(class="form-label") }}
+                            {{ form.media_type(class="form-select" + (" is-invalid" if form.media_type.errors else ""), onchange="toggleThumbnailField(this.value)") }}
+                            {% for error in form.media_type.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.media_file.label(class="form-label") }}
+                            {{ form.media_file(class="form-control" + (" is-invalid" if form.media_file.errors else "")) }}
+                            {% for error in form.media_file.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3" id="thumbnail-field" style="display: none;">
+                            {{ form.thumbnail.label(class="form-label") }}
+                            {{ form.thumbnail(class="form-control" + (" is-invalid" if form.thumbnail.errors else "")) }}
+                            {% for error in form.thumbnail.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.gallery_category.label(class="form-label") }}
+                            {{ form.gallery_category(class="form-select" + (" is-invalid" if form.gallery_category.errors else "")) }}
+                            {% for error in form.gallery_category.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                {{ form.is_featured(class="form-check-input") }}
+                                {{ form.is_featured.label(class="form-check-label") }}
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+function toggleThumbnailField(mediaType) {
+    const thumbnailField = document.getElementById('thumbnail-field');
+    thumbnailField.style.display = mediaType === 'video' ? 'block' : 'none';
+}
+
+// Set initial state on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const mediaTypeSelect = document.querySelector('select[name="media_type"]');
+    if (mediaTypeSelect) {
+        toggleThumbnailField(mediaTypeSelect.value);
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}
