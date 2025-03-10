@@ -3,9 +3,9 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 import os
 from app import db, app
-from models import User, Announcement, Banner, Document, Media, Content, Assignment, Attendance, StudentProgress, TransferCertificate
+from models import User, Announcement, Banner, Document, Media, Content, Assignment, Attendance, StudentProgress, TransferCertificate, PopupBanner, GalleryCategory, GalleryItem, FeeStructure, PublicDisclosure, ContactMessage
 from forms import (LoginForm, RegistrationForm, AnnouncementForm, ContactForm,
-                  BannerForm, DocumentForm, MediaForm, ContentForm, AssignmentForm, AttendanceForm, StudentProgressForm, SubmitAssignmentForm, TCRequestForm)
+                  BannerForm, DocumentForm, MediaForm, ContentForm, AssignmentForm, AttendanceForm, StudentProgressForm, SubmitAssignmentForm, TCRequestForm, PopupBannerForm, GalleryCategoryForm, GalleryItemForm, FeeStructureForm, PublicDisclosureForm, ContactResponseForm)
 import logging
 from datetime import datetime
 
@@ -36,8 +36,9 @@ def home():
     try:
         announcements = Announcement.query.order_by(Announcement.created_at.desc()).limit(3).all()
         banners = Banner.query.filter_by(is_active=True).order_by(Banner.order.asc()).all()
+        popup = PopupBanner.query.filter_by(is_active=True).first()
         logger.info(f"Retrieved {len(announcements)} announcements and {len(banners)} banners")
-        return render_template('home.html', announcements=announcements, banners=banners)
+        return render_template('home.html', announcements=announcements, banners=banners, popup=popup)
     except Exception as e:
         logger.error(f"Error in home route: {str(e)}")
         return "An error occurred", 500
@@ -59,9 +60,16 @@ def admissions():
 
 @main_bp.route('/contact', methods=['GET', 'POST'])
 def contact():
-    logger.info("Contact route accessed")
     form = ContactForm()
     if form.validate_on_submit():
+        message = ContactMessage(
+            name=form.name.data,
+            email=form.email.data,
+            subject=form.subject.data,
+            message=form.message.data
+        )
+        db.session.add(message)
+        db.session.commit()
         flash('Your message has been sent! We will get back to you soon.', 'success')
         return redirect(url_for('main.contact'))
     return render_template('contact.html', form=form)
@@ -481,3 +489,213 @@ def request_tc():
             flash('Error requesting TC. Please try again.', 'danger')
 
     return render_template('dashboard/tc_request.html', form=form)
+
+# Add after existing routes
+
+# Popup Banner Routes
+@dashboard_bp.route('/popup-banners/new', methods=['GET', 'POST'])
+@login_required
+def new_popup_banner():
+    if current_user.role != 'admin':
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    form = PopupBannerForm()
+    if form.validate_on_submit():
+        try:
+            image_url = None
+            if form.image.data:
+                image = form.image.data
+                filename = secure_filename(image.filename)
+                image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'popups', filename)
+                os.makedirs(os.path.dirname(image_path), exist_ok=True)
+                image.save(image_path)
+                image_url = f'/uploads/popups/{filename}'
+
+            banner = PopupBanner(
+                title=form.title.data,
+                content=form.content.data,
+                image_url=image_url,
+                is_active=form.is_active.data,
+                start_date=form.start_date.data,
+                end_date=form.end_date.data
+            )
+            db.session.add(banner)
+            db.session.commit()
+            flash('Popup banner created successfully!', 'success')
+            return redirect(url_for('dashboard.index'))
+        except Exception as e:
+            logger.error(f"Error creating popup banner: {str(e)}")
+            flash('Error creating popup banner. Please try again.', 'danger')
+
+    return render_template('dashboard/popup_banner_form.html', form=form, title='New Popup Banner')
+
+# Gallery Routes
+@dashboard_bp.route('/gallery/categories/new', methods=['GET', 'POST'])
+@login_required
+def new_gallery_category():
+    if current_user.role != 'admin':
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    form = GalleryCategoryForm()
+    if form.validate_on_submit():
+        category = GalleryCategory(
+            name=form.name.data,
+            description=form.description.data
+        )
+        db.session.add(category)
+        db.session.commit()
+        flash('Gallery category created successfully!', 'success')
+        return redirect(url_for('dashboard.manage_gallery'))
+
+    return render_template('dashboard/gallery_category_form.html', form=form, title='New Gallery Category')
+
+@dashboard_bp.route('/gallery/items/new', methods=['GET', 'POST'])
+@login_required
+def new_gallery_item():
+    if current_user.role != 'admin':
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    form = GalleryItemForm()
+    form.category_id.choices = [(c.id, c.name) for c in GalleryCategory.query.all()]
+
+    if form.validate_on_submit():
+        try:
+            image = form.image.data
+            filename = secure_filename(image.filename)
+            image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'gallery', filename)
+            os.makedirs(os.path.dirname(image_path), exist_ok=True)
+            image.save(image_path)
+
+            item = GalleryItem(
+                title=form.title.data,
+                description=form.description.data,
+                image_url=f'/uploads/gallery/{filename}',
+                category_id=form.category_id.data,
+                is_featured=form.is_featured.data
+            )
+            db.session.add(item)
+            db.session.commit()
+            flash('Gallery item added successfully!', 'success')
+            return redirect(url_for('dashboard.manage_gallery'))
+        except Exception as e:
+            logger.error(f"Error adding gallery item: {str(e)}")
+            flash('Error adding gallery item. Please try again.', 'danger')
+
+    return render_template('dashboard/gallery_item_form.html', form=form, title='New Gallery Item')
+
+# Fee Structure Routes
+@dashboard_bp.route('/fee-structure/new', methods=['GET', 'POST'])
+@login_required
+def new_fee_structure():
+    if current_user.role != 'admin':
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    form = FeeStructureForm()
+    if form.validate_on_submit():
+        fee = FeeStructure(
+            title=form.title.data,
+            class_name=form.class_name.data,
+            fee_type=form.fee_type.data,
+            amount=form.amount.data,
+            academic_year=form.academic_year.data,
+            payment_frequency=form.payment_frequency.data,
+            notes=form.notes.data,
+            is_active=form.is_active.data
+        )
+        db.session.add(fee)
+        db.session.commit()
+        flash('Fee structure added successfully!', 'success')
+        return redirect(url_for('dashboard.manage_fees'))
+
+    return render_template('dashboard/fee_structure_form.html', form=form, title='New Fee Structure')
+
+# Public Disclosure Routes
+@dashboard_bp.route('/disclosures/new', methods=['GET', 'POST'])
+@login_required
+def new_disclosure():
+    if current_user.role != 'admin':
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    form = PublicDisclosureForm()
+    if form.validate_on_submit():
+        try:
+            file_url = None
+            if form.file.data:
+                file = form.file.data
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'disclosures', filename)
+                os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                file.save(file_path)
+                file_url = f'/uploads/disclosures/{filename}'
+
+            disclosure = PublicDisclosure(
+                title=form.title.data,
+                category=form.category.data,
+                content=form.content.data,
+                file_url=file_url,
+                is_active=form.is_active.data,
+                display_order=form.display_order.data
+            )
+            db.session.add(disclosure)
+            db.session.commit()
+            flash('Public disclosure added successfully!', 'success')
+            return redirect(url_for('dashboard.manage_disclosures'))
+        except Exception as e:
+            logger.error(f"Error adding disclosure: {str(e)}")
+            flash('Error adding disclosure. Please try again.', 'danger')
+
+    return render_template('dashboard/disclosure_form.html', form=form, title='New Public Disclosure')
+
+# Frontend Routes
+@main_bp.route('/gallery')
+def gallery():
+    categories = GalleryCategory.query.all()
+    return render_template('gallery.html', categories=categories)
+
+@main_bp.route('/fee-structure')
+def fee_structure():
+    fees = FeeStructure.query.filter_by(is_active=True).all()
+    return render_template('fee_structure.html', fees=fees)
+
+@main_bp.route('/public-disclosure')
+def public_disclosure():
+    disclosures = PublicDisclosure.query.filter_by(is_active=True).order_by(PublicDisclosure.display_order).all()
+    return render_template('public_disclosure.html', disclosures=disclosures)
+
+
+# Admin Contact Message Management
+@dashboard_bp.route('/messages')
+@login_required
+def manage_messages():
+    if current_user.role != 'admin':
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    messages = ContactMessage.query.order_by(ContactMessage.created_at.desc()).all()
+    return render_template('dashboard/messages.html', messages=messages)
+
+@dashboard_bp.route('/messages/<int:id>/respond', methods=['GET', 'POST'])
+@login_required
+def respond_message(id):
+    if current_user.role != 'admin':
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('dashboard.index'))
+
+    message = ContactMessage.query.get_or_404(id)
+    form = ContactResponseForm()
+
+    if form.validate_on_submit():
+        message.response = form.response.data
+        message.status = 'responded'
+        message.responded_at = datetime.utcnow()
+        message.responded_by = current_user.id
+        db.session.commit()
+        flash('Response sent successfully!', 'success')
+        return redirect(url_for('dashboard.manage_messages'))
+
+    return render_template('dashboard/message_response.html', form=form, message=message)

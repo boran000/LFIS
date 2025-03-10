@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, TextAreaField, SubmitField, BooleanField, FileField, IntegerField, DateField
+from wtforms import StringField, PasswordField, SelectField, TextAreaField, SubmitField, BooleanField, FileField, IntegerField, DateField, FloatField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, URL, Optional, ValidationError
 from models import RegistrationCode, User
 
@@ -123,3 +123,63 @@ class ContentForm(FlaskForm):
     page_key = StringField('Page Identifier', validators=[DataRequired()])
     is_published = BooleanField('Published', default=True)
     submit = SubmitField('Save Content')
+
+class PopupBannerForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    content = TextAreaField('Content')
+    image = FileField('Banner Image')
+    is_active = BooleanField('Active')
+    start_date = DateField('Start Date')
+    end_date = DateField('End Date')
+    submit = SubmitField('Save Popup Banner')
+
+class GalleryCategoryForm(FlaskForm):
+    name = StringField('Category Name', validators=[DataRequired()])
+    description = TextAreaField('Description')
+    submit = SubmitField('Save Category')
+
+class GalleryItemForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    description = TextAreaField('Description')
+    image = FileField('Image', validators=[DataRequired()])
+    category_id = SelectField('Category', coerce=int, validators=[DataRequired()])
+    is_featured = BooleanField('Featured')
+    submit = SubmitField('Upload Image')
+
+class FeeStructureForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    class_name = StringField('Class', validators=[DataRequired()])
+    fee_type = SelectField('Fee Type', choices=[
+        ('tuition', 'Tuition Fee'),
+        ('hostel', 'Hostel Fee'),
+        ('transport', 'Transport Fee'),
+        ('other', 'Other Fee')
+    ], validators=[DataRequired()])
+    amount = FloatField('Amount', validators=[DataRequired()])
+    academic_year = StringField('Academic Year', validators=[DataRequired()])
+    payment_frequency = SelectField('Payment Frequency', choices=[
+        ('monthly', 'Monthly'),
+        ('quarterly', 'Quarterly'),
+        ('annually', 'Annually')
+    ])
+    notes = TextAreaField('Notes')
+    is_active = BooleanField('Active')
+    submit = SubmitField('Save Fee Structure')
+
+class PublicDisclosureForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    category = SelectField('Category', choices=[
+        ('mandatory', 'Mandatory Disclosure'),
+        ('general', 'General Information'),
+        ('financial', 'Financial Information'),
+        ('academic', 'Academic Information')
+    ], validators=[DataRequired()])
+    content = TextAreaField('Content', validators=[DataRequired()])
+    file = FileField('Attachment')
+    is_active = BooleanField('Active')
+    display_order = IntegerField('Display Order', default=0)
+    submit = SubmitField('Save Disclosure')
+
+class ContactResponseForm(FlaskForm):
+    response = TextAreaField('Response', validators=[DataRequired()])
+    submit = SubmitField('Send Response')
