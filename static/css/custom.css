@@ -55,6 +55,9 @@ a, button, .card, .nav-link {
 
 .nav-link {
     position: relative;
+    color: #ffffff !important; /* Added from edited code */
+    font-weight: 500;
+    padding: 0.5rem 1rem; /* Added from edited code */
 }
 
 .nav-link::after {
@@ -71,6 +74,9 @@ a, button, .card, .nav-link {
 .nav-link:hover::after {
     width: 100%;
     left: 0;
+}
+.nav-link:hover { /* Added from edited code */
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Animated buttons */
@@ -150,6 +156,22 @@ a, button, .card, .nav-link {
     .col-md-3, .col-md-4, .col-md-6 {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
+    }
+    .school-name { /* Added from edited code */
+        font-size: 1.5rem;
+    }
+
+    .certification { /* Added from edited code */
+        font-size: 0.9rem;
+    }
+
+    .address { /* Added from edited code */
+        font-size: 0.8rem;
+    }
+
+    .creative-section { /* Added from edited code */
+        text-align: center;
+        margin-top: 1rem;
     }
 }
 
@@ -234,7 +256,6 @@ footer {
     font-size: 2.5rem;
 }
 
-
 /* Custom alert styling */
 .alert {
     border-radius: 0.5rem;
@@ -253,4 +274,75 @@ footer {
 .badge {
     padding: 0.5em 1em;
     font-weight: 500;
+}
+
+/* Header Styles - from edited code */
+.top-bar {
+    background-color: #2B5C3F !important;
+}
+
+.main-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.school-name {
+    color: #2B5C3F !important;
+    font-size: 2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.certification {
+    color: #2B5C3F;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.address {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.creative-section {
+    position: relative;
+}
+
+.creative-text {
+    color: #2B5C3F;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.creative-subtext {
+    color: #2B5C3F;
+    font-size: 0.75rem;
+    font-style: italic;
+}
+
+/* Navigation Styles - from edited code */
+.navbar-dark.bg-success {
+    background-color: #2B5C3F !important;
+}
+
+
+/* Contact Info Styles - from edited code */
+.contact-info a {
+    font-size: 0.9rem;
+}
+
+.social-links a {
+    font-size: 1.2rem;
+    transition: opacity 0.3s ease;
+}
+
+.social-links a:hover {
+    opacity: 0.8;
+}
+
+/* Footer Override - from edited code */
+.bg-success {
+    background-color: #2B5C3F !important;
 }

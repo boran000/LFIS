@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="95" fill="#2B5C3F"/>
+  <circle cx="100" cy="100" r="85" fill="#fff"/>
+  <path d="M100 30c-38.66 0-70 31.34-70 70s31.34 70 70 70 70-31.34 70-70S138.66 30 100 30zm0 130c-33.14 0-60-26.86-60-60s26.86-60 60-60 60 26.86 60 60-26.86 60-60 60z" fill="#2B5C3F"/>
+  <path d="M100 50c-27.57 0-50 22.43-50 50s22.43 50 50 50 50-22.43 50-50-22.43-50-50-50zm0 90c-22.06 0-40-17.94-40-40s17.94-40 40-40 40 17.94 40 40-17.94 40-40 40z" fill="#2B5C3F"/>
+  <text x="100" y="105" text-anchor="middle" fill="#2B5C3F" font-family="Arial" font-weight="bold" font-size="24">LFIS</text>
+</svg>
