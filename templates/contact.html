@@ -1,109 +1,132 @@
+
 {% extends "base.html" %}
-
 {% block content %}
-<div class="contact-page">
-    <div class="hero-section bg-warning bg-gradient text-dark p-5 mb-5">
-        <div class="container">
-            <h1>Contact Us</h1>
-            <p class="lead">We're here to help and answer any questions you might have</p>
-        </div>
-    </div>
+    <div class="container py-5 mb-5">
+        <h2 class="text-center mb-4">Contact Us</h2>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 mb-5">
-                <h2>Get in Touch</h2>
-                <form method="POST" action="{{ url_for('main.contact') }}">
-                    {{ form.hidden_tag() }}
-                    <div class="mb-3">
-                        {{ form.name.label(class="form-label") }}
-                        {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
-                        {% for error in form.name.errors %}
-                            <div class="invalid-feedback">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="mb-3">
-                        {{ form.email.label(class="form-label") }}
-                        {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
-                        {% for error in form.email.errors %}
-                            <div class="invalid-feedback">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="mb-3">
-                        {{ form.subject.label(class="form-label") }}
-                        {{ form.subject(class="form-control" + (" is-invalid" if form.subject.errors else "")) }}
-                        {% for error in form.subject.errors %}
-                            <div class="invalid-feedback">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="mb-3">
-                        {{ form.message.label(class="form-label") }}
-                        {{ form.message(class="form-control" + (" is-invalid" if form.message.errors else ""), rows="5") }}
-                        {% for error in form.message.errors %}
-                            <div class="invalid-feedback">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    {{ form.submit(class="btn btn-primary") }}
-                </form>
-            </div>
-            <div class="col-md-6">
-                <h2>Contact Information</h2>
-                <div class="card mb-4">
+        <div class="row g-4">
+            <!-- Contact Form -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-geo-alt text-primary"></i> Address</h5>
-                        <p class="card-text">
-                            123 School Street<br>
-                            City, State 12345<br>
-                            Country
-                        </p>
-                    </div>
-                </div>
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-telephone text-primary"></i> Phone Numbers</h5>
-                        <p class="card-text">
-                            Main Office: (123) 456-7890<br>
-                            Admissions: (123) 456-7891<br>
-                            Emergency: (123) 456-7892
-                        </p>
-                    </div>
-                </div>
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-envelope text-primary"></i> Email Addresses</h5>
-                        <p class="card-text">
-                            General Inquiries: info@school.com<br>
-                            Admissions: admissions@school.com<br>
-                            Support: support@school.com
-                        </p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-clock text-primary"></i> Office Hours</h5>
-                        <p class="card-text">
-                            Monday - Friday: 8:00 AM - 4:00 PM<br>
-                            Saturday: 9:00 AM - 12:00 PM<br>
-                            Sunday: Closed
-                        </p>
+                        <h4 class="card-title mb-4">Send a Message</h4>
+                        <form method="POST">
+                            {{ form.csrf_token }}
+                            <div class="mb-3">
+                                {{ form.name.label(class="form-label") }}
+                                {{ form.name(class="form-control") }}
+                                {% for error in form.name.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.email.label(class="form-label") }}
+                                {{ form.email(class="form-control") }}
+                                {% for error in form.email.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.subject.label(class="form-label") }}
+                                {{ form.subject(class="form-control") }}
+                                {% for error in form.subject.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.message.label(class="form-label") }}
+                                {{ form.message(class="form-control", rows=4) }}
+                                {% for error in form.message.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Send Message</button>
+                        </form>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row mt-5">
-            <div class="col-12">
-                <h2>Find Us</h2>
-                <div class="card">
+            <!-- Contact Information -->
+
+            <div class="col-lg-6">
+                <div class="row g-6">
+                <div class="card shadow-sm mb-4">
                     <div class="card-body">
-                        <div class="ratio ratio-16x9">
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.2219901290355!2d-74.00369368400567!3d40.71312937933185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a23e28c1191%3A0x49f75d3281df052a!2s150%20Park%20Row%2C%20New%20York%2C%20NY%2010007!5e0!3m2!1sen!2sus!4v1644909816294!5m2!1sen!2sus" 
-                                style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                        <h4 class="card-title mb-3">Contact Information</h4>
+                        <div class="row contact-info-section">
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="contact-icon me-2">
+                                        <i class="bi bi-geo-alt-fill text-success fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fs-6 fw-bold mb-1">Address</h5>
+                                        <p class="text-muted small mb-0">Mau Balia Road, Khalishpur, Mau (U.P.), 275102</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="contact-icon me-2">
+                                        <i class="bi bi-telephone-fill text-success fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fs-6 fw-bold mb-1">Phone</h5>
+                                        <p class="text-muted small mb-0">(+91) 7007691196</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="contact-icon me-2">
+                                        <i class="bi bi-envelope-fill text-success fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fs-6 fw-bold mb-1">Email</h5>
+                                        <p class="text-muted small mb-0">lfis.mau15@gmail.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex">
+                                    <div class="contact-icon me-2">
+                                        <i class="bi bi-clock-fill text-success fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="fs-6 fw-bold mb-1">School Hours</h5>
+                                        <p class="text-muted small mb-0">Monday - Saturday: 8:00 AM - 4:00 PM</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <!-- Map -->
+                <!-- Map -->
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h4 class="card-title mb-3">Find Us</h4>
+        <div class="map-container">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d317050.8681768146!2d83.5990313!3d25.9713298!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399220a2a1da3657%3A0x499f0ee60b6baa15!2sLittle%20Flower%20International%20School%20Mau!5e0!3m2!1sen!2sus!4v1658884156986!5m2!1sen!2sus" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
     </div>
 </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="card shadow-sm mt-4">
+            <div class="card-body text-center">
+                <h4 class="card-title mb-4">Connect With Us</h4>
+                <div class="social-links">
+                    <a href="#" class="btn btn-outline-primary mx-2"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="btn btn-outline-info mx-2"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="btn btn-outline-danger mx-2"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="btn btn-outline-success mx-2"><i class="bi bi-whatsapp"></i></a>
+                    <a href="#" class="btn btn-outline-dark mx-2"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
