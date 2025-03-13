@@ -1,0 +1,43 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Upload Transfer Certificate</h2>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Upload TC for {{ User.query.get(tc.student_id).first_name }} {{ User.query.get(tc.student_id).last_name }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-4">
+                <h6>TC Number: {{ tc.tc_number }}</h6>
+                <p><strong>Reason for TC:</strong> {{ tc.reason }}</p>
+                <p><strong>Requested on:</strong> {{ tc.created_at.strftime('%d-%m-%Y') }}</p>
+            </div>
+            
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.file.label(class="form-label") }}
+                    {{ form.file(class="form-control" + (" is-invalid" if form.file.errors else "")) }}
+                    {% for error in form.file.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                    <small class="text-muted">Upload the completed Transfer Certificate document.</small>
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.notes.label(class="form-label") }}
+                    {{ form.notes(class="form-control", rows="3") }}
+                    <small class="text-muted">Additional notes or comments (optional).</small>
+                </div>
+                
+                <div class="d-grid">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

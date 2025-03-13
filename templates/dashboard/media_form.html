@@ -1,66 +1,146 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
+<div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="mb-0">{{ title }}</h4>
+                    <h3 class="mb-0">{{ title }}</h3>
                 </div>
                 <div class="card-body">
                     <form method="POST" enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
+
                         <div class="mb-3">
                             {{ form.title.label(class="form-label") }}
-                            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
-                            {% for error in form.title.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
+                            {{ form.title(class="form-control") }}
+                            {% if form.title.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.title.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
+
                         <div class="mb-3">
                             {{ form.description.label(class="form-label") }}
-                            {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows="3") }}
-                            {% for error in form.description.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
+                            {{ form.description(class="form-control", rows=3) }}
                         </div>
+
                         <div class="mb-3">
                             {{ form.media_type.label(class="form-label") }}
-                            {{ form.media_type(class="form-select" + (" is-invalid" if form.media_type.errors else ""), onchange="toggleThumbnailField(this.value)") }}
-                            {% for error in form.media_type.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
+                            {{ form.media_type(class="form-select", id="mediaType") }}
                         </div>
-                        <div class="mb-3">
+
+                        <div class="mb-3 video-fields" style="display: none;">
+                            {{ form.video_url.label(class="form-label") }}
+                            {{ form.video_url(class="form-control", id="video_url", placeholder="Paste YouTube or Facebook video URL here") }}
+                            <small class="text-muted">For YouTube, use format: https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID</small>
+                            <small class="text-muted d-block">For Facebook, use format: https://www.facebook.com/watch/?v=VIDEO_ID</small>
+                        </div>
+
+                        <div class="mb-3 video-fields" style="display: none;">
+                            {{ form.video_platform.label(class="form-label") }}
+                            {{ form.video_platform(class="form-select", id="video_platform") }}
+                        </div>
+
+                        <div class="mb-3 file-fields">
                             {{ form.media_file.label(class="form-label") }}
-                            {{ form.media_file(class="form-control" + (" is-invalid" if form.media_file.errors else "")) }}
-                            {% for error in form.media_file.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
+                            {{ form.media_file(class="form-control") }}
+                            {% if media and media.file_url %}
+                                <small class="form-text text-muted">Current file: {{ media.file_url }}</small>
+                            {% endif %}
                         </div>
-                        <div class="mb-3" id="thumbnail-field" style="display: none;">
+
+                        <div class="mb-3 video-fields" style="display: none;">
                             {{ form.thumbnail.label(class="form-label") }}
-                            {{ form.thumbnail(class="form-control" + (" is-invalid" if form.thumbnail.errors else "")) }}
-                            {% for error in form.thumbnail.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
+                            {{ form.thumbnail(class="form-control") }}
+                            {% if media and media.thumbnail_url %}
+                                <small class="form-text text-muted">Current thumbnail: {{ media.thumbnail_url }}</small>
+                            {% endif %}
                         </div>
+
                         <div class="mb-3">
                             {{ form.gallery_category.label(class="form-label") }}
-                            {{ form.gallery_category(class="form-select" + (" is-invalid" if form.gallery_category.errors else "")) }}
-                            {% for error in form.gallery_category.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
+                            {{ form.gallery_category(class="form-select") }}
                         </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.is_featured(class="form-check-input") }}
+                            {{ form.is_featured.label(class="form-check-label") }}
+                        </div>
+
                         <div class="mb-3">
-                            <div class="form-check">
-                                {{ form.is_featured(class="form-check-input") }}
-                                {{ form.is_featured.label(class="form-check-label") }}
+                            {{ form.media_type.label(class="form-label") }}
+                            {{ form.media_type(class="form-select", onchange="toggleMediaFields()") }}
+                        </div>
+
+                        <div id="videoFields" style="display: none;">
+                            <div class="mb-3">
+                                {{ form.video_platform.label(class="form-label") }}
+                                {{ form.video_platform(class="form-select") }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.video_url.label(class="form-label") }}
+                                {{ form.video_url(class="form-control", placeholder="https://www.youtube.com/watch?v=VIDEO_ID or Facebook video URL") }}
+                                <small class="text-muted">For YouTube videos, paste the full URL. For Facebook videos, paste the video URL.</small>
                             </div>
                         </div>
-                        <div class="d-grid">
+
+                        <div id="fileUploadField">
+                            <div class="mb-3">
+                                {{ form.media_file.label(class="form-label") }}
+                                {{ form.media_file(class="form-control") }}
+                                <small class="text-muted">Upload videos (MP4) or images.</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.thumbnail.label(class="form-label") }}
+                            {{ form.thumbnail(class="form-control") }}
+                            <small class="text-muted">Optional thumbnail for videos.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.gallery_category.label(class="form-label") }}
+                            {{ form.gallery_category(class="form-select") }}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.is_featured(class="form-check-input") }}
+                            {{ form.is_featured.label(class="form-check-label") }}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.is_active(class="form-check-input") }}
+                            {{ form.is_active.label(class="form-check-label") }}
+                        </div>
+
+                        <script>
+                            function toggleMediaFields() {
+                                const mediaType = document.querySelector('#media_type').value;
+                                const videoFields = document.querySelector('#videoFields');
+                                const fileUploadField = document.querySelector('#fileUploadField');
+
+                                if (mediaType === 'video') {
+                                    videoFields.style.display = 'block';
+                                } else {
+                                    videoFields.style.display = 'none';
+                                }
+                            }
+
+                            // Initialize on page load
+                            document.addEventListener('DOMContentLoaded', function() {
+                                toggleMediaFields();
+                            });
+                        </script>
+
+                        <div class="mb-3">
                             {{ form.submit(class="btn btn-primary") }}
+                            <a href="{{ url_for('dashboard.manage_media') }}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>
@@ -69,20 +149,90 @@
     </div>
 </div>
 
-{% block scripts %}
 <script>
-function toggleThumbnailField(mediaType) {
-    const thumbnailField = document.getElementById('thumbnail-field');
-    thumbnailField.style.display = mediaType === 'video' ? 'block' : 'none';
-}
+    document.addEventListener('DOMContentLoaded', function() {
+        const mediaTypeSelect = document.getElementById('mediaType');
+        const videoFields = document.querySelectorAll('.video-fields');
+        const fileFields = document.querySelectorAll('.file-fields');
+        const videoUrlField = document.getElementById('video_url');
+        const videoPlatformSelect = document.getElementById('video_platform');
 
-// Set initial state on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const mediaTypeSelect = document.querySelector('select[name="media_type"]');
-    if (mediaTypeSelect) {
-        toggleThumbnailField(mediaTypeSelect.value);
-    }
-});
+        function toggleFields() {
+            if (mediaTypeSelect.value === 'video') {
+                videoFields.forEach(field => field.style.display = 'block');
+
+                // Show or hide file field based on platform selection
+                if (videoPlatformSelect.value === 'youtube' || videoPlatformSelect.value === 'facebook') {
+                    fileFields.forEach(field => field.style.display = 'none');
+                    videoUrlField.required = true;
+                } else {
+                    fileFields.forEach(field => field.style.display = 'block');
+                    videoUrlField.required = false;
+                }
+            } else {
+                videoFields.forEach(field => field.style.display = 'none');
+                fileFields.forEach(field => field.style.display = 'block');
+            }
+        }
+
+        // Run on page load
+        toggleFields();
+
+        // Run when media type changes
+        mediaTypeSelect.addEventListener('change', toggleFields);
+
+        // Add listener for video platform changes
+        videoPlatformSelect.addEventListener('change', function() {
+            if (this.value === 'youtube' || this.value === 'facebook') {
+                fileFields.forEach(field => field.style.display = 'none');
+                videoUrlField.required = true;
+
+                // Update placeholder based on the platform
+                if (this.value === 'youtube') {
+                    videoUrlField.placeholder = "https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID";
+                } else if (this.value === 'facebook') {
+                    videoUrlField.placeholder = "https://www.facebook.com/watch/?v=VIDEO_ID";
+                }
+            } else {
+                fileFields.forEach(field => field.style.display = 'block');
+                videoUrlField.required = false;
+            }
+        });
+
+        // Help with YouTube URL formatting
+        videoUrlField.addEventListener('blur', function() {
+            if (videoPlatformSelect.value === 'youtube') {
+                const url = this.value.trim();
+                if (url.includes('youtube.com/watch') || url.includes('youtu.be/')) {
+                    // URL is good
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                } else if (url !== '') {
+                    // Alert user about incorrect format
+                    this.classList.add('is-invalid');
+                    this.classList.remove('is-valid');
+                    alert("Please use a valid YouTube URL format: https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID");
+                } else {
+                    this.classList.remove('is-invalid');
+                    this.classList.remove('is-valid');
+                }
+            } else if (videoPlatformSelect.value === 'facebook') {
+                const url = this.value.trim();
+                if (url.includes('facebook.com/')) {
+                    // URL is good
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                } else if (url !== '') {
+                    // Alert user about incorrect format
+                    this.classList.add('is-invalid');
+                    this.classList.remove('is-valid');
+                    alert("Please use a valid Facebook video URL format: https://www.facebook.com/watch/?v=VIDEO_ID");
+                } else {
+                    this.classList.remove('is-invalid');
+                    this.classList.remove('is-valid');
+                }
+            }
+        });
+    });
 </script>
-{% endblock %}
 {% endblock %}

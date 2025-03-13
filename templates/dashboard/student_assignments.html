@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Assignments</h2>
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Assignment List</h5>
+        </div>
+        <div class="card-body">
+            {% if assignments and assignments|length > 0 %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Title</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Grade</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for assignment in assignments %}
+                        <tr>
+                            <td>{{ assignment.title }}</td>
+                            <td>{{ assignment.due_date.strftime('%d-%m-%Y') if assignment.due_date else 'N/A' }}</td>
+                            <td>
+                                <span class="badge {% if assignment.status == 'pending' %}bg-warning{% elif assignment.status == 'submitted' %}bg-info{% else %}bg-success{% endif %}">
+                                    {{ assignment.status|capitalize }}
+                                </span>
+                            </td>
+                            <td>{{ assignment.grade if assignment.grade else '-' }}</td>
+                            <td>
+                                {% if assignment.status == 'pending' %}
+                                <a href="{{ url_for('dashboard.submit_assignment', assignment_id=assignment.id) }}" class="btn btn-sm btn-primary">
+                                    Submit
+                                </a>
+                                {% elif assignment.status == 'graded' %}
+                                <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#feedbackModal-{{ assignment.id }}">
+                                    View Feedback
+                                </button>
+
+                                <!-- Feedback Modal -->
+                                <div class="modal fade" id="feedbackModal-{{ assignment.id }}" tabindex="-1" aria-labelledby="feedbackModalLabel-{{ assignment.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="feedbackModalLabel-{{ assignment.id }}">Feedback: {{ assignment.title }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p><strong>Grade:</strong> {{ assignment.grade }}</p>
+                                                <p><strong>Feedback:</strong></p>
+                                                <p>{{ assignment.feedback }}</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {% if assignment.file_url %}
+                                <a href="{{ assignment.file_url }}" class="btn btn-sm btn-success" target="_blank">
+                                    <i class="bi bi-download"></i> Download
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                No assignments found.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

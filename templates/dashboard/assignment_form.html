@@ -1,50 +1,43 @@
+
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="mb-0">{{ title }}</h4>
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0">{{ title if title else 'New Assignment' }}</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.title.label(class="form-label") }}
+                    {{ form.title(class="form-control") }}
                 </div>
-                <div class="card-body">
-                    <form method="POST" enctype="multipart/form-data">
-                        {{ form.hidden_tag() }}
-                        <div class="mb-3">
-                            {{ form.title.label(class="form-label") }}
-                            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
-                            {% for error in form.title.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                        <div class="mb-3">
-                            {{ form.description.label(class="form-label") }}
-                            {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows="3") }}
-                            {% for error in form.description.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                        <div class="mb-3">
-                            {{ form.due_date.label(class="form-label") }}
-                            {{ form.due_date(class="form-control" + (" is-invalid" if form.due_date.errors else ""), type="date") }}
-                            {% for error in form.due_date.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                        <div class="mb-3">
-                            {{ form.file.label(class="form-label") }}
-                            {{ form.file(class="form-control" + (" is-invalid" if form.file.errors else "")) }}
-                            {% for error in form.file.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                        <div class="d-grid">
-                            {{ form.submit(class="btn btn-primary") }}
-                        </div>
-                    </form>
+                <div class="mb-3">
+                    {{ form.description.label(class="form-label") }}
+                    {{ form.description(class="form-control", rows=5) }}
                 </div>
-            </div>
+                <div class="mb-3">
+                    {{ form.class_name.label(class="form-label") }}
+                    {{ form.class_name(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.subject.label(class="form-label") }}
+                    {{ form.subject(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.due_date.label(class="form-label") }}
+                    {{ form.due_date(class="form-control", type="date") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.file.label(class="form-label") }}
+                    {{ form.file(class="form-control") }}
+                </div>
+                <div class="d-grid">
+                    {{ form.submit(class="btn btn-success btn-lg") }}
+                </div>
+            </form>
         </div>
     </div>
 </div>

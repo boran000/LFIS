@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid dashboard-container">
+    <div class="row dashboard-row">
+        <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'dashboard.index' %}active{% endif %}" href="{{ url_for('dashboard.index') }}">
+                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'announcement' in request.endpoint %}active{% endif %}" href="{{ url_for('dashboard.manage_announcements') }}">
+                            <i class="bi bi-megaphone me-2"></i>Announcements
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'banner' in request.endpoint %}active{% endif %}" href="{{ url_for('dashboard.manage_banners') }}">
+                            <i class="bi bi-image me-2"></i>Banners
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'popup' in request.endpoint %}active{% endif %}" href="{{ url_for('dashboard.manage_popup_banners') }}">
+                            <i class="bi bi-window me-2"></i>Popup Banners
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'gallery' in request.endpoint %}active{% endif %}" href="{{ url_for('dashboard.manage_gallery') }}">
+                            <i class="bi bi-images me-2"></i>Gallery
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'disclosure' in request.endpoint %}active{% endif %}" href="{{ url_for('dashboard.manage_disclosures') }}">
+                            <i class="bi bi-file-text me-2"></i>Public Disclosures
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">{% block dashboard_title %}Dashboard{% endblock %}</h1>
+            </div>
+
+            {% block dashboard_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}

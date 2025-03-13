@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ title }}</h2>
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    {{ form.title(class="form-control", id="title", placeholder="e.g., Fee Structure 2023-2024") }}
+                    {% if form.title.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.title.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="academic_year" class="form-label">Academic Year</label>
+                    {{ form.academic_year(class="form-control", id="academic_year", placeholder="e.g., 2023-2024") }}
+                    {% if form.academic_year.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.academic_year.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="file" class="form-label">Fee Structure Document (PDF or Image)</label>
+                    <input type="file" class="form-control" id="file" name="file" accept=".pdf,.jpg,.jpeg,.png">
+                    <div class="form-text">Upload the complete fee structure as a PDF or image file.</div>
+                </div>
+
+                <div class="mb-3 form-check">
+                    {{ form.is_active(class="form-check-input", id="is_active") }}
+                    <label class="form-check-label" for="is_active">Active</label>
+                </div>
+
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Notes (Optional)</label>
+                    {{ form.notes(class="form-control", id="notes", rows=3) }}
+                </div>
+
+                <div class="d-grid gap-2">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

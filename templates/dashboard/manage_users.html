@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>User Management</h2>
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">All Users</h5>
+        </div>
+        <div class="card-body">
+            {% if users and users|length > 0 or teachers and teachers|length > 0 %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Registration Code</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.first_name }} {{ user.last_name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <span class="badge {% if user.role == 'admin' %}bg-danger{% elif user.role == 'teacher' %}bg-success{% else %}bg-primary{% endif %}">
+                                    {{ user.role|capitalize }}
+                                </span>
+                            </td>
+                            <td>{{ user.registration_code_used or 'None' }}</td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <a href="{{ url_for('dashboard.reset_user_password', id=user.id) }}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-key"></i> Change Password
+                                </a>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="randomPasswordReset({{ user.id }})">
+                                    <i class="bi bi-shuffle"></i> Random Reset
+                                </button>
+
+                                {% if user.role != 'admin' %}
+                                    <a href="{{ url_for('dashboard.delete_user', id=user.id) }}"
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Are you sure you want to delete user {{ user.username }}?');">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        <!-- Teacher Records -->
+                        {% for teacher in teachers %}
+                        <tr class="table-success">
+                            <td>{{ teacher.username }}</td>
+                            <td>{{ teacher.first_name }} {{ teacher.last_name }}</td>
+                            <td>{{ teacher.email }}</td>
+                            <td>
+                                <span class="badge bg-success">Teacher</span>
+                            </td>
+                            <td>{{ teacher.registration_code_used or 'None' }}</td>
+                            <td>{{ teacher.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <a href="{{ url_for('dashboard.reset_teacher_password', id=teacher.id) }}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-key"></i> Change Password
+                                </a>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="randomTeacherPasswordReset({{ teacher.id }})">
+                                    <i class="bi bi-shuffle"></i> Random Reset
+                                </button>
+                                <a href="{{ url_for('dashboard.delete_teacher', id=teacher.id) }}"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Are you sure you want to delete teacher {{ teacher.username }}?');">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4">
+                <p class="text-muted">No users found</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- No modals needed with direct confirmation approach -->
+{% endblock %}

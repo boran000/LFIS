@@ -1,63 +1,79 @@
+
 {% extends "base.html" %}
 
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">{{ title }}</h4>
                 </div>
                 <div class="card-body">
                     <form method="POST" enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
+
                         <div class="mb-3">
                             {{ form.title.label(class="form-label") }}
-                            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
+                            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else ""), placeholder="Enter banner title") }}
                             {% for error in form.title.errors %}
                                 <div class="invalid-feedback">{{ error }}</div>
                             {% endfor %}
+                            <small class="form-text text-muted">A short, descriptive title for the banner</small>
                         </div>
+
                         <div class="mb-3">
                             {{ form.description.label(class="form-label") }}
-                            {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows="3") }}
+                            {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows=4, placeholder="Enter banner description") }}
                             {% for error in form.description.errors %}
                                 <div class="invalid-feedback">{{ error }}</div>
                             {% endfor %}
+                            <small class="form-text text-muted">Additional details about the banner (optional)</small>
                         </div>
-                        <div class="mb-3">
+
+                        <div class="mb-4">
                             {{ form.image.label(class="form-label") }}
                             {{ form.image(class="form-control" + (" is-invalid" if form.image.errors else "")) }}
                             {% for error in form.image.errors %}
                                 <div class="invalid-feedback">{{ error }}</div>
                             {% endfor %}
+                            <small class="form-text text-muted">Recommended size: 1200x400 pixels</small>
                             {% if banner and banner.image_url %}
                                 <div class="mt-2">
-                                    <small class="text-muted">Current image: {{ banner.image_url }}</small>
+                                    <p>Current image:</p>
+                                    <img src="{{ banner.image_url }}" alt="{{ banner.title }}" class="img-thumbnail" style="max-height: 150px;">
                                 </div>
                             {% endif %}
                         </div>
+
                         <div class="mb-3">
                             {{ form.link_url.label(class="form-label") }}
-                            {{ form.link_url(class="form-control" + (" is-invalid" if form.link_url.errors else "")) }}
+                            {{ form.link_url(class="form-control" + (" is-invalid" if form.link_url.errors else ""), placeholder="https://example.com") }}
                             {% for error in form.link_url.errors %}
                                 <div class="invalid-feedback">{{ error }}</div>
                             {% endfor %}
+                            <small class="form-text text-muted">Where users will be directed when clicking the banner (optional)</small>
                         </div>
-                        <div class="mb-3">
-                            <div class="form-check">
-                                {{ form.is_active(class="form-check-input") }}
-                                {{ form.is_active.label(class="form-check-label") }}
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    {{ form.is_active(class="form-check-input") }}
+                                    {{ form.is_active.label(class="form-check-label") }}
+                                </div>
+                                <small class="form-text text-muted">Only active banners will be displayed on the website</small>
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.order.label(class="form-label") }}
+                                {{ form.order(class="form-control" + (" is-invalid" if form.order.errors else ""), type="number") }}
+                                <small class="form-text text-muted">Lower numbers appear first</small>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            {{ form.order.label(class="form-label") }}
-                            {{ form.order(class="form-control" + (" is-invalid" if form.order.errors else ""), type="number") }}
-                            {% for error in form.order.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                        <div class="d-grid">
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('dashboard.manage_banners') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
                             {{ form.submit(class="btn btn-primary") }}
                         </div>
                     </form>

@@ -1,0 +1,114 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Generate Registration Code</h2>
+        <a href="{{ url_for('dashboard.manage_registration_codes') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Registration Codes
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">New Registration Code</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.role.label }}</label>
+                            {{ form.role(class="form-select") }}
+                            {% if form.role.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.role.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Generate Code</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">About Registration Codes</h5>
+                </div>
+                <div class="card-body">
+                    <p>Registration codes allow new users to sign up with specific roles:</p>
+                    <ul class="mb-3">
+                        <li><strong>Teacher codes</strong>: Allow new teachers to register.</li>
+                        <li><strong>Student codes</strong>: Allow new students to register.</li>
+                    </ul>
+                    <hr>
+                    <p class="mb-0"><strong>Note:</strong> Each code can only be used once and expires after use.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if codes and codes|length > 0 %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Recently Generated Codes</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Code</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Generated Date</th>
+                            <th>Used By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for code in codes %}
+                        <tr>
+                            <td><code>{{ code.code }}</code></td>
+                            <td>
+                                <span class="badge bg-{{ 'primary' if code.role == 'teacher' else 'success' }}">
+                                    {{ code.role|capitalize }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 'secondary' if code.is_used else 'success' }}">
+                                    {{ 'Used' if code.is_used else 'Available' }}
+                                </span>
+                            </td>
+                            <td>{{ code.created_at.strftime('%d-%m-%Y %H:%M') }}</td>
+                            <td>
+                                {% if code.used_by %}
+                                    {% set user = User.query.get(code.used_by) %}
+                                    {% if user %}
+                                        {{ user.first_name }} {{ user.last_name }}
+                                    {% else %}
+                                        Unknown
+                                    {% endif %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info mt-4">
+        <i class="bi bi-info-circle me-2"></i> No codes have been generated yet.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

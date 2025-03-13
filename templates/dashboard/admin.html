@@ -2,9 +2,19 @@
 
 {% block content %}
 <div class="admin-dashboard">
-    <h1 class="mb-4">Admin Dashboard</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="animate-fadeInUp">Admin Dashboard</h1>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('dashboard.generate_registration_code') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Generate Registration Code
+            </a>
+            <a href="{{ url_for('dashboard.new_announcement') }}" class="btn btn-outline-primary">
+                <i class="bi bi-megaphone"></i> New Announcement
+            </a>
+        </div>
+    </div>
 
-    <div class="row g-4">
+    <div class="row g-4 animate-fadeInUp" style="--delay: 0.1s;">
         <div class="col-md-3">
             <div class="card bg-primary text-white">
                 <div class="card-body">
@@ -41,12 +51,74 @@
 
     <!-- Content Management Section -->
     <div class="row mt-5">
+        <!-- News & Announcements -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-megaphone"></i> News & Announcements</h5>
+                    <div>
+                        <a href="{{ url_for('dashboard.manage_announcements') }}" class="btn btn-sm btn-info me-2">Manage</a>
+                        <a href="{{ url_for('dashboard.new_announcement') }}" class="btn btn-sm btn-primary">Add Announcement</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for announcement in Announcement.query.order_by(Announcement.created_at.desc()).limit(5).all() %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ announcement.title }}</h6>
+                                <small>{{ announcement.created_at.strftime('%d-%m-%Y') }}</small>
+                            </div>
+                            <p class="mb-1 text-truncate">{{ announcement.content }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transfer Certificates -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> Transfer Certificates</h5>
+                    <div>
+                        <a href="{{ url_for('dashboard.manage_tc') }}" class="btn btn-sm btn-primary me-2">Manage TCs</a>
+                        <a href="{{ url_for('dashboard.new_tc') }}" class="btn btn-sm btn-success">Upload TC</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-around mb-2">
+                        <div>
+                            <h6>Pending Requests</h6>
+                            <p class="h4">{{ TransferCertificate.query.filter_by(status='pending').count() }}</p>
+                        </div>
+                        <div>
+                            <h6>Approved</h6>
+                            <p class="h4">{{ TransferCertificate.query.filter_by(status='approved').count() }}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-around mt-3">
+                        <a href="{{ url_for('dashboard.manage_tc') }}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-list-check"></i> Manage TCs
+                        </a>
+                        <a href="{{ url_for('dashboard.new_tc') }}" class="btn btn-success btn-sm">
+                            <i class="bi bi-upload"></i> Upload TC
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Banners Management -->
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-image"></i> Banners</h5>
-                    <a href="{{ url_for('dashboard.new_banner') }}" class="btn btn-sm btn-primary">Add Banner</a>
+                    <div>
+                        <a href="{{ url_for('dashboard.manage_banners') }}" class="btn btn-sm btn-info me-2">Manage</a>
+                        <a href="{{ url_for('dashboard.new_banner') }}" class="btn btn-sm btn-primary">Add Banner</a>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -82,74 +154,35 @@
             </div>
         </div>
 
-        <!-- Documents Management -->
+        <!-- Public Disclosures Management -->
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-file-earmark"></i> Documents</h5>
-                    <a href="{{ url_for('dashboard.new_document') }}" class="btn btn-sm btn-primary">Upload Document</a>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Type</th>
-                                    <th>Access</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for doc in Document.query.order_by(Document.created_at.desc()).all() %}
-                                <tr>
-                                    <td>{{ doc.title }}</td>
-                                    <td><span class="badge bg-info">{{ doc.document_type }}</span></td>
-                                    <td>
-                                        <span class="badge {% if doc.is_public %}bg-success{% else %}bg-warning{% endif %}">
-                                            {{ 'Public' if doc.is_public else 'Private' }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="{{ url_for('dashboard.edit_document', id=doc.id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                        <button class="btn btn-sm btn-danger">Delete</button>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                    <h5 class="mb-0"><i class="bi bi-file-text"></i> Public Disclosures</h5>
+                    <div>
+                        <a href="{{ url_for('dashboard.manage_disclosures') }}" class="btn btn-sm btn-info me-2">Manage</a>
+                        <a href="{{ url_for('dashboard.new_disclosure') }}" class="btn btn-sm btn-primary">Add Disclosure</a>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Media Gallery Management -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-camera"></i> Media Gallery</h5>
-                    <a href="{{ url_for('dashboard.new_media') }}" class="btn btn-sm btn-primary">Upload Media</a>
-                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
                                 <tr>
                                     <th>Title</th>
-                                    <th>Type</th>
                                     <th>Category</th>
-                                    <th>Actions</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for media in Media.query.order_by(Media.created_at.desc()).all() %}
+                                {% for disclosure in PublicDisclosure.query.order_by(PublicDisclosure.category, PublicDisclosure.display_order).limit(5).all() %}
                                 <tr>
-                                    <td>{{ media.title }}</td>
-                                    <td><span class="badge bg-info">{{ media.media_type }}</span></td>
-                                    <td>{{ media.gallery_category }}</td>
+                                    <td>{{ disclosure.title }}</td>
+                                    <td>{{ disclosure.category }}</td>
                                     <td>
-                                        <a href="{{ url_for('dashboard.edit_media', id=media.id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                        <button class="btn btn-sm btn-danger">Delete</button>
+                                        <span class="badge {% if disclosure.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {{ 'Active' if disclosure.is_active else 'Inactive' }}
+                                        </span>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -160,12 +193,43 @@
             </div>
         </div>
 
-        <!-- Content Pages Management -->
+        <!-- Gallery Management -->
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-file-richtext"></i> Content Pages</h5>
-                    <a href="{{ url_for('dashboard.new_content') }}" class="btn btn-sm btn-primary">Add Content</a>
+                    <h5 class="mb-0"><i class="bi bi-images"></i> Gallery Management</h5>
+                    <div>
+                        <a href="{{ url_for('dashboard.manage_gallery') }}" class="btn btn-sm btn-info me-2">Manage</a>
+                        <a href="{{ url_for('dashboard.new_gallery_item') }}" class="btn btn-sm btn-primary">Add Item</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6>Photos</h6>
+                            <p class="h4">{{ GalleryItem.query.count() if GalleryItem is defined else 0 }}</p>
+                        </div>
+                        <div>
+                            <h6>Videos</h6>
+                            <p class="h4">{{ Media.query.filter_by(media_type='video').count() }}</p>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('dashboard.new_gallery_category') }}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-folder-plus"></i> Add Category
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popup Banners -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-window"></i> Popup Banners</h5>
+                    <div>
+                        <a href="{{ url_for('dashboard.manage_popup_banners') }}" class="btn btn-sm btn-info me-2">Manage</a>
+                        <a href="{{ url_for('dashboard.new_popup_banner') }}" class="btn btn-sm btn-primary">Add Popup</a>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -173,29 +237,77 @@
                             <thead>
                                 <tr>
                                     <th>Title</th>
-                                    <th>Page Key</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>Duration</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for content in Content.query.order_by(Content.created_at.desc()).all() %}
+                                {% for popup in PopupBanner.query.order_by(PopupBanner.created_at.desc()).limit(3).all() %}
                                 <tr>
-                                    <td>{{ content.title }}</td>
-                                    <td><code>{{ content.page_key }}</code></td>
+                                    <td>{{ popup.title }}</td>
                                     <td>
-                                        <span class="badge {% if content.is_published %}bg-success{% else %}bg-secondary{% endif %}">
-                                            {{ 'Published' if content.is_published else 'Draft' }}
+                                        <span class="badge {% if popup.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {{ 'Active' if popup.is_active else 'Inactive' }}
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="{{ url_for('dashboard.edit_content', id=content.id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                        <button class="btn btn-sm btn-danger">Delete</button>
+                                        {% if popup.start_date and popup.end_date %}
+                                            {{ popup.start_date.strftime('%d-%m-%Y') }} to {{ popup.end_date.strftime('%d-%m-%Y') }}
+                                        {% else %}
+                                            Permanent
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fee Structure -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-cash-stack"></i> Fee Structure</h5>
+                    <div>
+                        <a href="{{ url_for('dashboard.new_fee_structure') }}" class="btn btn-sm btn-primary">Add Fee Structure</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p>Manage school fee structure for different classes and academic years.</p>
+                    <a href="#" class="btn btn-sm btn-outline-primary">View Fee Structure</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Code Generation -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-key"></i> Registration Codes</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('dashboard.generate_registration_code') }}" class="btn btn-primary">Generate New Codes</a>
+                        <a href="{{ url_for('dashboard.manage_registration_codes') }}" class="btn btn-secondary">Manage Codes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Management -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-people"></i> User Management</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('dashboard.manage_users') }}" class="btn btn-primary">
+                            <i class="bi bi-person-gear"></i> Manage Users
+                        </a>
                     </div>
                 </div>
             </div>

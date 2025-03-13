@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Upload Transfer Certificate</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Student:</strong> {{ student.first_name }} {{ student.last_name }} ({{ student.username }})</p>
+                    <p><strong>Reason:</strong> {{ tc.reason }}</p>
+                    <p><strong>Request Date:</strong> {{ tc.created_at.strftime('%d %b %Y') }}</p>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="mb-3">
+                            <label for="tc_file" class="form-label">TC Document (PDF/Image)</label>
+                            <input type="file" class="form-control" id="tc_file" name="tc_file" required accept=".pdf,.jpg,.jpeg,.png">
+                        </div>
+
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary">Upload Certificate</button>
+                            <a href="{{ url_for('dashboard.manage_tc') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

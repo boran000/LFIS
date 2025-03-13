@@ -1,0 +1,122 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4">Manage Transfer Certificates</h2>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <a href="{{ url_for('dashboard.new_tc') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Issue New TC
+        </a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">Pending TC Requests</h5>
+        </div>
+        <div class="card-body">
+            {% set pending_tcs = transfer_certificates|selectattr('status', 'equalto', 'pending')|list %}
+            
+            {% if pending_tcs %}
+                <div class="table-responsive">
+                    <table class="table table-hover" id="pendingTcTable">
+                        <thead>
+                            <tr>
+                                <th>TC Number</th>
+                                <th>Student Name</th>
+                                <th>Request Date</th>
+                                <th>Class</th>
+                                <th>Reason</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tc in pending_tcs %}
+                                <tr>
+                                    <td>{{ tc.tc_number }}</td>
+                                    <td>{{ tc.student.first_name }} {{ tc.student.last_name }}</td>
+                                    <td>{{ tc.created_at.strftime('%d-%m-%Y') }}</td>
+                                    <td>{{ tc.student.class_name }}</td>
+                                    <td>{{ tc.reason|truncate(50) }}</td>
+                                    <td>
+                                        <a href="{{ url_for('dashboard.admin_upload_tc', tc_id=tc.id) }}" class="btn btn-success btn-sm">
+                                            <i class="bi bi-upload"></i> Upload TC
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No pending transfer certificate requests.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Approved Transfer Certificates</h5>
+        </div>
+        <div class="card-body">
+            {% set approved_tcs = transfer_certificates|selectattr('status', 'equalto', 'approved')|list %}
+            
+            {% if approved_tcs %}
+                <div class="table-responsive">
+                    <table class="table table-hover" id="tcTable">
+                        <thead>
+                            <tr>
+                                <th>TC Number</th>
+                                <th>Student Name</th>
+                                <th>Date of Issue</th>
+                                <th>Class</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tc in approved_tcs %}
+                                <tr>
+                                    <td>{{ tc.tc_number }}</td>
+                                    <td>{{ tc.student.first_name }} {{ tc.student.last_name }}</td>
+                                    <td>{{ tc.created_at.strftime('%d-%m-%Y') }}</td>
+                                    <td>{{ tc.student.class_name }}</td>
+                                    <td>
+                                        {% if tc.file_url %}
+                                            <a href="{{ url_for('static', filename=tc.file_url.lstrip('/')) }}" class="btn btn-info btn-sm" target="_blank">
+                                                <i class="bi bi-eye"></i> View TC
+                                            </a>
+                                        {% else %}
+                                            <span class="badge bg-warning">No File</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No approved transfer certificates yet.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#tcTable').DataTable({
+            "order": [[0, "desc"]]
+        });
+        $('#pendingTcTable').DataTable({
+            "order": [[2, "desc"]]
+        });
+    });
+</script>
+{% endblock %}

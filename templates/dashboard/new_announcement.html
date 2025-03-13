@@ -1,37 +1,125 @@
+
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="mb-0">Create New Announcement</h4>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ url_for('dashboard.new_announcement') }}">
-                        {{ form.hidden_tag() }}
-                        <div class="mb-3">
-                            {{ form.title.label(class="form-label") }}
-                            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ title or 'Create New Announcement' }}</h2>
+        <a href="{{ url_for('dashboard.manage_announcements') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Announcements
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    {{ form.title(class="form-control", id="title") }}
+                    {% if form.title.errors %}
+                        <div class="invalid-feedback d-block">
                             {% for error in form.title.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
+                                {{ error }}
                             {% endfor %}
                         </div>
-                        <div class="mb-3">
-                            {{ form.content.label(class="form-label") }}
-                            {{ form.content(class="form-control" + (" is-invalid" if form.content.errors else ""), rows="5") }}
-                            {% for error in form.content.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                        <div class="d-grid">
-                            {{ form.submit(class="btn btn-primary") }}
-                        </div>
-                    </form>
+                    {% endif %}
                 </div>
-            </div>
+
+                <div class="mb-3">
+                    <label for="content" class="form-label">Content</label>
+                    {{ form.content(class="form-control", id="content", rows=6) }}
+                    {% if form.content.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.content.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="form-text">You can use basic HTML tags for formatting.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="attachment" class="form-label">Attachment (Optional)</label>
+                    {{ form.attachment(class="form-control", id="attachment") }}
+                    <div class="form-text">Upload an image, PDF, or document related to this announcement.</div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add a simple text editor for announcement content
+    document.addEventListener('DOMContentLoaded', function() {
+        const contentArea = document.getElementById('content');
+
+        // Add formatting toolbar
+        const toolbar = document.createElement('div');
+        toolbar.className = 'btn-toolbar mb-2';
+        toolbar.innerHTML = `
+            <div class="btn-group me-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-tag="b">Bold</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-tag="i">Italic</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-tag="u">Underline</button>
+            </div>
+            <div class="btn-group me-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-tag="h2">Heading</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-tag="p">Paragraph</button>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-tag="ul">List</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-tag="a">Link</button>
+            </div>
+        `;
+
+        contentArea.parentNode.insertBefore(toolbar, contentArea);
+
+        // Add formatting button functionality
+        const buttons = toolbar.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tag = this.getAttribute('data-tag');
+                let startTag = `<${tag}>`;
+                let endTag = `</${tag}>`;
+                let defaultText = '';
+
+                // Special cases
+                if (tag === 'a') {
+                    startTag = '<a href="#">';
+                    defaultText = 'link text';
+                } else if (tag === 'ul') {
+                    startTag = '<ul>\n  <li>';
+                    endTag = '</li>\n</ul>';
+                    defaultText = 'list item';
+                }
+
+                // Get selection or insert at cursor
+                const start = contentArea.selectionStart;
+                const end = contentArea.selectionEnd;
+                const selectedText = contentArea.value.substring(start, end);
+                const textToInsert = selectedText || defaultText;
+
+                // Insert the tags
+                const newText = contentArea.value.substring(0, start) +
+                                startTag + textToInsert + endTag +
+                                contentArea.value.substring(end);
+
+                contentArea.value = newText;
+
+                // Focus and select the new content
+                contentArea.focus();
+                const newCursorPos = start + startTag.length + textToInsert.length;
+                contentArea.setSelectionRange(start + startTag.length, newCursorPos);
+            });
+        });
+    });
+</script>
 {% endblock %}

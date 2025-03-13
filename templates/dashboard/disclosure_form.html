@@ -1,0 +1,125 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ title }}</h2>
+        <a href="{{ url_for('dashboard.manage_disclosures') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Disclosures
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    {{ form.title(class="form-control", id="title") }}
+                    {% if form.title.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.title.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    {{ form.category(class="form-control", id="category") }}
+                    {% if form.category.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.category.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="content" class="form-label">Content</label>
+                    {{ form.content(class="form-control", id="content", rows=5) }}
+                    {% if form.content.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.content.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="file" class="form-label">Attachment (PDF, DOC, etc.)</label>
+                    {{ form.file(class="form-control", id="file") }}
+                    {% if form.file.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.file.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if disclosure and disclosure.file_url %}
+                    <div class="mt-2">
+                        <p>Current file: <a href="{{ disclosure.file_url }}" target="_blank">View File</a></p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3 form-check">
+                    {{ form.is_active(class="form-check-input", id="is_active") }}
+                    <label class="form-check-label" for="is_active">Active</label>
+                </div>
+
+                <div class="mb-3">
+                    <label for="display_order" class="form-label">Display Order</label>
+                    {{ form.display_order(class="form-control", id="display_order") }}
+                    {% if form.display_order.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.display_order.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-grid gap-2">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Map the dropdown options to match the public disclosure navbar categories
+    document.addEventListener('DOMContentLoaded', function() {
+        const categorySelect = document.getElementById('category');
+
+        // Clear existing options
+        while (categorySelect.firstChild) {
+            categorySelect.removeChild(categorySelect.firstChild);
+        }
+
+        // Add options that match the navbar categories
+        const categories = [
+            {value: 'general', text: 'General Information'},
+            {value: 'documents', text: 'Documents & Information'},
+            {value: 'staff', text: 'Staff (Teaching)'},
+            {value: 'infrastructure', text: 'School Infrastructure'},
+            {value: 'results', text: 'Results & Academics'}
+        ];
+
+        categories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.value;
+            option.textContent = cat.text;
+            categorySelect.appendChild(option);
+        });
+    });
+</script>
+{% endblock %}

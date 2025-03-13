@@ -1,0 +1,44 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Issue New Transfer Certificate</h3>
+                </div>
+                <div class="card-body">
+                    <p class="mb-4">Use this form to issue a new transfer certificate directly by admission number. The student will be able to retrieve it using the same admission number.</p>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="mb-3">
+                            <label for="admission_number" class="form-label">Student Admission Number</label>
+                            <input type="text" name="admission_number" id="admission_number" class="form-control" required>
+                            <small class="text-muted">Enter any admission number for the certificate</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">Reason for TC</label>
+                            <textarea name="reason" id="reason" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tc_file" class="form-label">Upload Certificate File</label>
+                            <input type="file" name="tc_file" id="tc_file" class="form-control" required>
+                            <small class="text-muted">Upload PDF, JPG, or PNG files only</small>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Issue Transfer Certificate</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

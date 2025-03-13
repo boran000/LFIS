@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Upload Transfer Certificate</h2>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Upload TC by Admission Number</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.admission_number.label(class="form-label") }}
+                    {{ form.admission_number(class="form-control" + (" is-invalid" if form.admission_number.errors else "")) }}
+                    {% for error in form.admission_number.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="mb-3">
+                    {{ form.tc_number.label(class="form-label") }}
+                    {{ form.tc_number(class="form-control" + (" is-invalid" if form.tc_number.errors else "")) }}
+                    {% for error in form.tc_number.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="mb-3">
+                    {{ form.file.label(class="form-label") }}
+                    {{ form.file(class="form-control" + (" is-invalid" if form.file.errors else "")) }}
+                    {% for error in form.file.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                    <small class="text-muted">Upload the completed Transfer Certificate document.</small>
+                </div>
+                <div class="mb-3">
+                    {{ form.notes.label(class="form-label") }}
+                    {{ form.notes(class="form-control" + (" is-invalid" if form.notes.errors else ""), rows="3") }}
+                    {% for error in form.notes.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="d-grid">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

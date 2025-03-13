@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Transfer Certificates</h2>
+        <a href="{{ url_for('dashboard.request_tc') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Request New TC
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            {% if tcs %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>TC Number</th>
+                                <th>Issue Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tc in tcs %}
+                            <tr>
+                                <td>{{ tc.tc_number }}</td>
+                                <td>{{ tc.created_at.strftime('%d-%m-%Y') }}</td>
+                                <td>
+                                    {% if tc.status == 'pending' %}
+                                    <span class="badge bg-warning">Pending</span>
+                                    {% elif tc.status == 'approved' %}
+                                    <span class="badge bg-success">Approved</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">{{ tc.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if tc.status == 'approved' and tc.file_url %}
+                                    <a href="{{ url_for('static', filename=tc.file_url.lstrip('/')) }}" class="btn btn-primary btn-sm" target="_blank">
+                                        <i class="bi bi-eye me-1"></i> View
+                                    </a>
+                                    <a href="{{ url_for('static', filename=tc.file_url.lstrip('/')) }}" class="btn btn-success btn-sm" download>
+                                        <i class="bi bi-download me-1"></i> Download
+                                    </a>
+                                    {% else %}
+                                    <span class="text-muted">Pending approval</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i> You have not requested any transfer certificates yet.
+                    <a href="{{ url_for('dashboard.request_tc') }}" class="alert-link">Request one now</a>.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

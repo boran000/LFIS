@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">{{ title }}</h2>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {{ form.title(class="form-control") }}
+                            {% if form.title.errors %}
+                                <div class="alert alert-danger mt-1">
+                                    {% for error in form.title.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control", rows=3) }}
+                            {% if form.description.errors %}
+                                <div class="alert alert-danger mt-1">
+                                    {% for error in form.description.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.category_id.label(class="form-label") }}
+                            {{ form.category_id(class="form-select") }}
+                            {% if form.category_id.errors %}
+                                <div class="alert alert-danger mt-1">
+                                    {% for error in form.category_id.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">This will determine the folder where your image is stored.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.image.label(class="form-label") }}
+                            {{ form.image(class="form-control") }}
+                            {% if form.image.errors %}
+                                <div class="alert alert-danger mt-1">
+                                    {% for error in form.image.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if item and item.image_url %}
+                                <div class="mt-2">
+                                    <label>Current Image:</label>
+                                    <img src="{{ url_for('static', filename=item.image_url.replace('/uploads/', 'uploads/')) }}" alt="{{ item.title }}" class="img-thumbnail" style="max-height: 200px;">
+                                    <div class="form-text text-muted">Path: {{ item.image_url }}</div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.is_featured(class="form-check-input") }}
+                            {{ form.is_featured.label(class="form-check-label") }}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.is_active(class="form-check-input") }}
+                            {{ form.is_active.label(class="form-check-label") }}
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('dashboard.manage_gallery') }}" class="btn btn-secondary">Cancel</a>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Instructions</h5>
+                </div>
+                <div class="card-body">
+                    <p>Please fill in the details for the gallery item:</p>
+                    <ul>
+                        <li><strong>Title:</strong> A descriptive title for the image.</li>
+                        <li><strong>Description:</strong> Optional description or caption.</li>
+                        <li><strong>Category:</strong> Select the category this image belongs to. This determines the folder structure.</li>
+                        <li><strong>Image:</strong> Upload the image file (JPG, PNG, etc.).</li>
+                        <li><strong>Featured:</strong> Check to highlight this item in featured sections.</li>
+                        <li><strong>Active:</strong> Only active images are displayed in the public gallery.</li>
+                    </ul>
+                    <p class="text-muted small">
+                        Recommended image size: 1200px × 800px<br>
+                        Max file size: 5MB
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
