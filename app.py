@@ -20,13 +20,13 @@ db = SQLAlchemy(model_class=Base)
 login_manager = LoginManager()
 csrf = CSRFProtect()
 
-# Import config
-from config import Config
-
 # Create Flask app
 app = Flask(__name__)
-app.config.from_object(Config)
+app.secret_key = os.environ.get("SECRET_KEY", "default-dev-key")  # Fallback for development
 app.config['UPLOAD_FOLDER'] = os.path.join(app.static_folder, 'uploads')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///schoolhub.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['WTF_CSRF_ENABLED'] = True  # Enable CSRF protection
 
 # Ensure instance folder exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
