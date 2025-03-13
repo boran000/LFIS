@@ -1,36 +1,48 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="mb-0">Login</h4>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="{{ url_for('auth.login') }}">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="auth-form animate-fadeInUp">
+                <h2 class="text-center mb-4">Welcome Back</h2>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST">
                     {{ form.hidden_tag() }}
-                    <div class="mb-3">
+                    <div class="mb-4">
                         {{ form.username.label(class="form-label") }}
-                        {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
+                        {{ form.username(class="form-control", placeholder="Enter your username") }}
                         {% for error in form.username.errors %}
-                            <div class="invalid-feedback">{{ error }}</div>
+                            <div class="text-danger mt-1">{{ error }}</div>
                         {% endfor %}
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-4">
                         {{ form.password.label(class="form-label") }}
-                        {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
+                        {{ form.password(class="form-control", placeholder="Enter your password") }}
                         {% for error in form.password.errors %}
-                            <div class="invalid-feedback">{{ error }}</div>
+                            <div class="text-danger mt-1">{{ error }}</div>
                         {% endfor %}
                     </div>
-                    <div class="d-grid">
-                        {{ form.submit(class="btn btn-primary") }}
+                    <div class="d-grid gap-2 mb-4">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
                     </div>
                 </form>
-            </div>
-            <div class="card-footer text-center">
-                <p class="mb-0">Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a></p>
+
+                <div class="text-center">
+                    <p>Don't have an account? <a href="{{ url_for('auth.register_selection') }}" class="fw-semibold">Register here</a></p>
+                    <p class="mt-4"><a href="{{ url_for('main.home') }}"><i class="bi bi-arrow-left"></i> Back to Home</a></p>
+                </div>
             </div>
         </div>
     </div>
