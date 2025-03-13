@@ -1,73 +1,201 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="mb-0">Register</h4>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="{{ url_for('auth.register') }}">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="auth-form animate-fadeInUp">
+                <h2 class="text-center mb-4">Create Your Account</h2>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> You need a registration code to sign up. Contact the administrator if you don't have one.
+                </div>
+
+                <form method="POST">
                     {{ form.hidden_tag() }}
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            {{ form.first_name.label(class="form-label") }}
-                            {{ form.first_name(class="form-control" + (" is-invalid" if form.first_name.errors else "")) }}
-                            {% for error in form.first_name.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.first_name.label(class="form-label") }}
+                                {{ form.first_name(class="form-control", placeholder="Enter your first name") }}
+                                {% for error in form.first_name.errors %}
+                                    <div class="text-danger mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            {{ form.last_name.label(class="form-label") }}
-                            {{ form.last_name(class="form-control" + (" is-invalid" if form.last_name.errors else "")) }}
-                            {% for error in form.last_name.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.last_name.label(class="form-label") }}
+                                {{ form.last_name(class="form-control", placeholder="Enter your last name") }}
+                                {% for error in form.last_name.errors %}
+                                    <div class="text-danger mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
+
                     <div class="mb-3">
                         {{ form.username.label(class="form-label") }}
-                        {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
+                        {{ form.username(class="form-control", placeholder="Choose a username") }}
                         {% for error in form.username.errors %}
-                            <div class="invalid-feedback">{{ error }}</div>
+                            <div class="text-danger mt-1">{{ error }}</div>
                         {% endfor %}
                     </div>
+
                     <div class="mb-3">
                         {{ form.email.label(class="form-label") }}
-                        {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                        {{ form.email(class="form-control", placeholder="Enter your email address") }}
                         {% for error in form.email.errors %}
-                            <div class="invalid-feedback">{{ error }}</div>
+
+<h3 class="text-center mb-4">Teacher Registration</h3>
+<form method="POST" novalidate>
+    {{ teacher_form.hidden_tag() }}
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="mb-3">
+                {{ teacher_form.first_name.label(class="form-label") }}
+                {{ teacher_form.first_name(class="form-control", placeholder="Enter your first name") }}
+                {% for error in teacher_form.first_name.errors %}
+                    <div class="text-danger mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                {{ teacher_form.last_name.label(class="form-label") }}
+                {{ teacher_form.last_name(class="form-control", placeholder="Enter your last name") }}
+                {% for error in teacher_form.last_name.errors %}
+                    <div class="text-danger mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        {{ teacher_form.username.label(class="form-label") }}
+        {{ teacher_form.username(class="form-control", placeholder="Choose a username") }}
+        {% for error in teacher_form.username.errors %}
+            <div class="text-danger mt-1">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-3">
+        {{ teacher_form.email.label(class="form-label") }}
+        {{ teacher_form.email(class="form-control", placeholder="Enter your email address") }}
+        {% for error in teacher_form.email.errors %}
+            <div class="text-danger mt-1">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="mb-3">
+                {{ teacher_form.subject.label(class="form-label") }}
+                {{ teacher_form.subject(class="form-control", placeholder="Enter your subject") }}
+                {% for error in teacher_form.subject.errors %}
+                    <div class="text-danger mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                {{ teacher_form.qualification.label(class="form-label") }}
+                {{ teacher_form.qualification(class="form-control", placeholder="Enter your qualification") }}
+                {% for error in teacher_form.qualification.errors %}
+                    <div class="text-danger mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="mb-3">
+                {{ teacher_form.password.label(class="form-label") }}
+                {{ teacher_form.password(class="form-control", placeholder="Choose a password") }}
+                {% for error in teacher_form.password.errors %}
+                    <div class="text-danger mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                {{ teacher_form.confirm_password.label(class="form-label") }}
+                {{ teacher_form.confirm_password(class="form-control", placeholder="Confirm your password") }}
+                {% for error in teacher_form.confirm_password.errors %}
+                    <div class="text-danger mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        {{ teacher_form.registration_code.label(class="form-label") }}
+        {{ teacher_form.registration_code(class="form-control", placeholder="Enter your teacher registration code") }}
+        {% for error in teacher_form.registration_code.errors %}
+            <div class="text-danger mt-1">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="d-grid gap-2 mb-4">
+        {{ teacher_form.submit(class="btn btn-success btn-lg") }}
+    </div>
+</form>
+
+                            <div class="text-danger mt-1">{{ error }}</div>
                         {% endfor %}
                     </div>
-                    <div class="mb-3">
-                        {{ form.role.label(class="form-label") }}
-                        {{ form.role(class="form-select" + (" is-invalid" if form.role.errors else "")) }}
-                        {% for error in form.role.errors %}
-                            <div class="invalid-feedback">{{ error }}</div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.password.label(class="form-label") }}
+                                {{ form.password(class="form-control", placeholder="Create a password") }}
+                                {% for error in form.password.errors %}
+                                    <div class="text-danger mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.confirm_password.label(class="form-label") }}
+                                {{ form.confirm_password(class="form-control", placeholder="Confirm your password") }}
+                                {% for error in form.confirm_password.errors %}
+                                    <div class="text-danger mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.registration_code.label(class="form-label") }}
+                        {{ form.registration_code(class="form-control", placeholder="Enter your registration code") }}
+                        {% for error in form.registration_code.errors %}
+                            <div class="text-danger mt-1">{{ error }}</div>
                         {% endfor %}
                     </div>
-                    <div class="mb-3">
-                        {{ form.password.label(class="form-label") }}
-                        {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
-                        {% for error in form.password.errors %}
-                            <div class="invalid-feedback">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="mb-3">
-                        {{ form.confirm_password.label(class="form-label") }}
-                        {{ form.confirm_password(class="form-control" + (" is-invalid" if form.confirm_password.errors else "")) }}
-                        {% for error in form.confirm_password.errors %}
-                            <div class="invalid-feedback">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    <div class="d-grid">
-                        {{ form.submit(class="btn btn-primary") }}
+
+                    <div class="d-grid gap-2 mb-4">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
                     </div>
                 </form>
-            </div>
-            <div class="card-footer text-center">
-                <p class="mb-0">Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a></p>
+
+                <div class="text-center">
+                    <p>Already have an account? <a href="{{ url_for('auth.login') }}" class="fw-semibold">Login here</a></p>
+                    <p class="mt-4"><a href="{{ url_for('main.home') }}"><i class="bi bi-arrow-left"></i> Back to Home</a></p>
+                </div>
             </div>
         </div>
     </div>
