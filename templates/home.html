@@ -1,38 +1,72 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="hero-section mb-5">
-    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+<!-- Popup Banner -->
+{% if show_popup and popup %}
+<!-- Popup Banner -->
+<div id="popupBanner" class="popup-banner">
+    <div class="popup-content">
+        <div class="popup-header">
+            <h4>{{ popup.title }}</h4>
+            <button type="button" class="popup-close" id="popupCloseBtn">&times;</button>
         </div>
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <div class="carousel-content bg-primary bg-gradient p-5 text-center">
-                    <h1>Welcome to Our School</h1>
-                    <p class="lead">Empowering minds, building futures</p>
-                    <a href="{{ url_for('main.admissions') }}" class="btn btn-light btn-lg">Apply Now</a>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="carousel-content bg-success bg-gradient p-5 text-center">
-                    <h1>Excellence in Education</h1>
-                    <p class="lead">Discover our academic programs</p>
-                    <a href="{{ url_for('main.academics') }}" class="btn btn-light btn-lg">Learn More</a>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="carousel-content bg-info bg-gradient p-5 text-center">
-                    <h1>Join Our Community</h1>
-                    <p class="lead">Experience quality education</p>
-                    <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg">Register Now</a>
-                </div>
-            </div>
+        <div class="popup-body">
+            {% if popup.image_url %}
+                {% if popup.image_url.startswith('http') %}
+                    <img src="{{ popup.image_url }}" alt="{{ popup.title }}" class="img-fluid mb-3">
+                {% else %}
+                    <img src="{{ url_for('static', filename=popup.image_url.lstrip('/')) }}" alt="{{ popup.title }}" class="img-fluid mb-3">
+                {% endif %}
+            {% endif %}
+            {% if popup.content %}
+                <div class="popup-text">{{ popup.content|safe }}</div>
+            {% endif %}
+        </div>
+        <div class="popup-footer text-end p-3">
+            <button type="button" class="btn btn-secondary" id="popupCloseBtn2">Close</button>
         </div>
     </div>
 </div>
+{% endif %}
+{% if banners %}
+<div id="carouselBanners" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        {% for banner in banners %}
+            <button type="button" data-bs-target="#carouselBanners" data-bs-slide-to="{{ loop.index0 }}"
+                    {% if loop.first %}class="active" aria-current="true"{% endif %}
+                    aria-label="Slide {{ loop.index }}"></button>
+        {% endfor %}
+    </div>
+    <div class="carousel-inner">
+        {% for banner in banners %}
+            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                {% if banner.image_url.startswith('http') %}
+                    <img src="{{ banner.image_url }}" class="d-block w-100" alt="{{ banner.title }}" style="height: 500px; object-fit: cover;">
+                {% else %}
+                    <img src="{{ url_for('static', filename=banner.image_url.lstrip('/')) }}" class="d-block w-100" alt="{{ banner.title }}" style="height: 500px; object-fit: cover;">
+                {% endif %}
+                <div class="carousel-caption d-none d-md-block" style="background-color: rgba(0,0,0,0.5); padding: 20px; border-radius: 10px;">
+                    <h5>{{ banner.title }}</h5>
+                    <p>{{ banner.description }}</p>
+                    {% if banner.link_url %}
+                        <a href="{{ banner.link_url }}" class="btn btn-primary">Learn More</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselBanners" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselBanners" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+{% endif %}
+
+<!-- Popup banner has been removed -->
 
 <div class="row g-4 mb-5">
     <div class="col-md-4">
@@ -68,8 +102,15 @@
         <div class="card mb-3">
             <div class="card-body">
                 <h5 class="card-title">{{ announcement.title }}</h5>
-                <p class="card-text">{{ announcement.content }}</p>
+                <div>{{ announcement.content|safe }}</div>
                 <small class="text-muted">Posted on {{ announcement.created_at.strftime('%B %d, %Y') }}</small>
+                {% if announcement.file_url %}
+                    <div class="mt-3">
+                        <a href="{{ url_for('static', filename=announcement.file_url.lstrip('/')) }}" class="btn btn-outline-primary" target="_blank">
+                            <i class="bi bi-file-earmark"></i> View Attachment
+                        </a>
+                    </div>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
