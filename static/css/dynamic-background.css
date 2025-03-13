@@ -1,0 +1,114 @@
+
+/* Dynamic Background with Transparency */
+.dynamic-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(
+        135deg,
+        rgba(43, 92, 63, 0.2) 0%,
+        rgba(43, 92, 63, 0.05) 100%
+    );
+    overflow: hidden;
+}
+
+.dynamic-background:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle at 10% 20%,
+        rgba(176, 219, 189, 0.15) 0%,
+        rgba(43, 92, 63, 0.1) 90%
+    );
+}
+
+.bg-shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.1);
+    animation: float 20s infinite ease-in-out;
+}
+
+.shape1 {
+    top: 10%;
+    left: 10%;
+    width: 300px;
+    height: 300px;
+    animation-delay: 0s;
+}
+
+.shape2 {
+    top: 60%;
+    left: 70%;
+    width: 200px;
+    height: 200px;
+    animation-delay: 5s;
+}
+
+.shape3 {
+    top: 40%;
+    left: 30%;
+    width: 150px;
+    height: 150px;
+    animation-delay: 10s;
+}
+
+.shape4 {
+    top: 80%;
+    left: 20%;
+    width: 180px;
+    height: 180px;
+    animation-delay: 15s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) translateX(0);
+    }
+    25% {
+        transform: translateY(-20px) translateX(20px);
+    }
+    50% {
+        transform: translateY(-10px) translateX(-10px);
+    }
+    75% {
+        transform: translateY(20px) translateX(-20px);
+    }
+}
+
+/* Ensure content remains readable with the background */
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Fix dropdown menu z-index issues */
+.dropdown-menu {
+    z-index: 1100 !important;
+}
+
+.navbar .nav-item .dropdown-menu {
+    z-index: 1100 !important;
+    position: absolute;
+    margin-top: 0;
+}
+
+/* Make sure carousel has lower z-index than dropdown */
+#schoolCarousel {
+    position: relative;
+    z-index: 1;
+}
+
+/* Fix navbar z-index */
+.navbar {
+    position: relative;
+    z-index: 1060;
+}

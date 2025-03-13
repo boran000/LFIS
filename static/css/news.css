@@ -1,0 +1,168 @@
+/* News Page Custom Styles */
+.news-page .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.news-page .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.news-page .announcement-content {
+    line-height: 1.6;
+}
+
+.news-page .card-header {
+    border-bottom: none;
+}
+
+.news-page .hero-section {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+.news-page .list-group-item {
+    transition: background-color 0.3s ease;
+}
+
+.news-page .list-group-item:hover {
+    background-color: rgba(43, 92, 63, 0.05);
+}
+
+.news-page .badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35em 0.65em;
+}
+
+.news-page .alert {
+    border-radius: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .news-page .hero-section {
+        padding: 3rem 0 !important;
+    }
+    
+    .news-page .hero-section h1 {
+        font-size: 1.75rem;
+    }
+    
+    .news-page .hero-section p.lead {
+        font-size: 1rem;
+    }
+}
+
+/* News Page Layout Fixes */
+.news-page {
+  overflow-x: hidden;
+}
+
+.news-page .row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Fix for sidebar content alignment */
+.news-page .sidebar-content {
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+/* Card margins and padding adjustments */
+.news-page .card {
+  margin-bottom: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .news-page .sidebar-content {
+    position: static;
+    max-height: none;
+  }
+}
+
+/* Enhancement for announcement cards */
+.announcement-content {
+  overflow-wrap: break-word;
+}
+
+/* Improve spacing in sidebar cards */
+.news-page .list-group-item {
+  padding: 0.75rem 1rem;
+}
+
+/* News page container */
+.news-page {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Sidebar content adjustments */
+.sidebar-content {
+  width: 100%;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+/* Fix container width */
+.container {
+  max-width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  box-sizing: border-box;
+}
+
+/* Row adjustments */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -10px;
+  margin-left: -10px;
+  width: 100%;
+}
+
+/* Column adjustments */
+.col-md-8, .col-md-4 {
+  padding-right: 10px;
+  padding-left: 10px;
+  box-sizing: border-box;
+}
+
+/* Newsletter form fix */
+.sidebar-content form {
+  width: 100%;
+  max-width: 100%;
+}
+
+.sidebar-content .input-group {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .news-page .hero-section {
+    padding: 3rem 1rem !important;
+  }
+
+  .news-page h1 {
+    font-size: 1.75rem;
+  }
+
+  .news-page .lead {
+    font-size: 1rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  .sidebar-content {
+    margin-top: 1.5rem;
+  }
+}

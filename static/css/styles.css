@@ -1,0 +1,69 @@
+
+/* Popup Banner Styles */
+.popup-banner {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.popup-banner.show {
+    opacity: 1;
+}
+
+.popup-content {
+    background-color: #fff;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.popup-header h4 {
+    margin: 0;
+}
+
+.popup-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.popup-body {
+    padding: 1rem;
+}
+
+.popup-body img {
+    max-width: 100%;
+    height: auto;
+}
+
+.popup-text {
+    margin-top: 1rem;
+}
+
+.popup-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 0.75rem;
+}
+

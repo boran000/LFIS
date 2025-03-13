@@ -1,0 +1,204 @@
+
+/* Student dashboard responsive fixes */
+.dashboard-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.dashboard-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+  width: 100%;
+}
+
+/* Card adjustments */
+.card {
+  width: 100%;
+  margin-bottom: 20px;
+  word-wrap: break-word;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.card-body {
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.list-group-item {
+  overflow: hidden;
+  word-wrap: break-word;
+}
+
+/* Fix for long text content */
+.mb-1, .card-title, h5, h6, p {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
+}
+
+/* Prevent content overflow */
+.container-fluid {
+  padding-right: 15px;
+  padding-left: 15px;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Table adjustments */
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 0;
+  table-layout: fixed;
+}
+
+.table th, .table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+/* Container row adjustments */
+.row {
+  margin-right: -10px;
+  margin-left: -10px;
+  flex-wrap: wrap;
+}
+
+/* Column adjustments */
+.col-md-3, .col-md-4, .col-md-6, .col-md-8, .col-md-9, .col-lg-10, .col-lg-12 {
+  padding-right: 10px;
+  padding-left: 10px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .col-md-3 {
+    width: 25%;
+    flex: 0 0 25%;
+  }
+  .col-md-4 {
+    width: 33.333333%;
+    flex: 0 0 33.333333%;
+  }
+  .col-md-6 {
+    width: 50%;
+    flex: 0 0 50%;
+  }
+  .col-md-8 {
+    width: 66.666667%;
+    flex: 0 0 66.666667%;
+  }
+  .col-md-9 {
+    width: 75%;
+    flex: 0 0 75%;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 0 10px;
+  }
+
+  .sidebar-nav {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  /* Smaller font sizes on mobile */
+  .card-title {
+    font-size: 1.25rem;
+  }
+
+  /* Make sure buttons don't overflow */
+  .btn {
+    white-space: normal;
+    word-wrap: break-word;
+  }
+
+  /* Improve dashboard layout on small screens */
+  .container-fluid.py-4 {
+
+/* Student dashboard specific fixes */
+.dashboard-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -10px;
+  margin-left: -10px;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Button text overflow prevention */
+.btn-sm {
+  white-space: normal;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Prevent horizontal scrolling for list group items */
+.list-group-item {
+  padding: 0.75rem;
+}
+
+/* Fix responsive behavior on small screens */
+@media (max-width: 576px) {
+  .table th, .table td {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  /* Stack columns on mobile */
+  .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+    padding: 1rem 0.5rem !important;
+  }
+
+  /* Better spacing for mobile */
+  .card-body {
+    padding: 0.75rem;
+  }
+
+  /* Reduce text size for better fit */
+  .card-header h5 {
+    font-size: 1rem;
+  }
+
+  /* Fix sidebar width */
+  .col-md-3 {
+    max-width: 100%;
+  }
+}
+
+/* Specific fix for student dashboard */
+.py-4 {
+  padding-top: 1.5rem !important;
+  padding-bottom: 1.5rem !important;
+  overflow-x: hidden;
+}
